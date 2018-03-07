@@ -1,0 +1,8 @@
+.ant-tabs-tab{
+    padding: 16px 2vw !important;
+    margin: 0 2.5vw !important;
+}
+
+.ant-card-bordered{
+    border-top: 0 !important;
+}

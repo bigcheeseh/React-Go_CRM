@@ -1,0 +1,28 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    color: #1675ce;
+}
+.ant-layout-header{
+    background: #FAFAFA !important;
+    box-shadow: 0 1px 4px rgba(0,21,41,.08);
+}
+.avatar{
+    background: #1675ce !important;
+}
+.header
+h2{
+    color: #FAFAFA;
+}
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 24px 0;
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
