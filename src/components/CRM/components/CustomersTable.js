@@ -21,7 +21,9 @@ const columns = [{
     Header: 'ФИО',
     accessor: 'personName',
     width: 300,
-        Cell: ({ original }) => <div style={{ cursor: 'pointer' }} className="personName"><p>{original.personName}</p></div>
+        Cell: ({ original }) => <div style={{ cursor: 'pointer'}} className="personName">
+                                    <p>{original.personName}</p>
+                                </div>
 }, {
     Header: 'Группа',
     accessor: 'group'
@@ -56,14 +58,16 @@ const CustomersTable = ({contacts, openModalAndUpdate})=>{
                 getTdProps={(state, rowInfo, column, instance) => {
                                 return {
                                     onClick: (e, handleOriginal) => {
-                                        // console.log('A Td Element was clicked!')
-                                        // console.log('it produced this event:', e)
-                                        // console.log('It was in this column:', column)
-                                        // console.log('It was in this table instance:', instance)
+                                        console.log('A Td Element was clicked!')
+                                        console.log('it produced this event:', e)
+                                        console.log('It was in this column:', column)
+                                        console.log('It was in this table instance:', instance)
                                         console.log('It was in this row:', rowInfo)
 
                                         if (rowInfo && rowInfo.original && rowInfo.original.id){
-                                            openModalAndUpdate(rowInfo.original);
+                                            if (column.id === 'personName' || column.id === 'photo'){
+                                                openModalAndUpdate(rowInfo.original);
+                                            }
                                         }
                                         // IMPORTANT! React-Table uses onClick internally to trigger
                                         // events like expanding SubComponents and pivots.

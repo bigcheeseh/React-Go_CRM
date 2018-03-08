@@ -18,11 +18,11 @@ const tabList = [{
     tab: 'Ссылки',
 }];
 
-const content = ({closeModal, saveContact, currentContactData}) =>{ 
+const content = ({closeModal, saveContact, currentContactData, updateContact}) =>{ 
 
     //console.log(props)
     return {
-            main: <CustomerFrom closeModal={closeModal} saveContact={saveContact} currentContactData={currentContactData} />,
+        main: <CustomerFrom closeModal={closeModal} saveContact={saveContact} currentContactData={currentContactData} updateContact={updateContact}/>,
             files: <p>customer files</p>,
             notes: <Notes />,
             links: <p>customer links</p>

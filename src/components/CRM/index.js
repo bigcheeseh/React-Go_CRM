@@ -6,8 +6,11 @@ import CustomersTable from './components/CustomersTable';
 import PropTypes from 'prop-types';
 
 import { Layout, Menu, Icon, Alert, Input, Col, Row, Button, Upload, notification } from 'antd';
+import './index.css'
+
 const { Header, Sider, Content } = Layout;
 const { Search } = Input;
+
 
 // function beforeUpload(file) {
 //     const isLt2M = file.size / 1024 / 1024 < 4;
@@ -30,6 +33,8 @@ class CRM extends Component{
     static propTypes = {
         contacts: PropTypes.array.isRequired,
         saveContact: PropTypes.func.isRequired,
+        updateContact: PropTypes.func.isRequired,
+        commonSearch: PropTypes.func.isRequired,
     }
     state = {
         modalIsOpen: false,
@@ -55,7 +60,7 @@ class CRM extends Component{
 
     
     render(){
-        const { title, saveContact, contacts } = this.props;
+        const { title, saveContact, updateContact, contacts } = this.props;
         const { currentContactData } = this.state;
 
         return(                  
@@ -93,25 +98,14 @@ class CRM extends Component{
                                 onAfterOpen={this.afterOpenModal}
                                 onRequestClose={this.closeModal}
                                 contentLabel="Customer Modal"
-                                style={{
-                                    overlay: {
-                                        width: '100%',
-                                    },
-                                    content: {
-                                        width: '60vw',
-                                        height: '85vh',
-                                        margin: 'auto',
-                                        padding: 0,
-                                        overflow: 'auto',
-                                        background: 'rgba(255,255,255,0)',
-                                        border: 'none'
-                                    }
-                                }}
+                                className="modal"
+                                overlayClassName="overlay"
                             >   
-                                <Alert message="Информация о контакте" type="info" style={{borderRadius: 0}}/>
-                                <CustomerCard style={{width: '100%', height: '100%' }} 
+                    <Alert message="Информация о контакте" type="info" style={{borderRadius: '3px 3px 0 0'}}/>
+                                <CustomerCard style={{width: '100%', height: '100%', padding: '10px' }} 
                                               closeModal={this.closeModal} 
                                               saveContact={saveContact}
+                                              updateContact={updateContact}
                                               currentContactData={currentContactData} />
                             
                             </Modal>

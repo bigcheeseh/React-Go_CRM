@@ -1,4 +1,4 @@
-import { SAVE_CONTACT, SORT_CONTACTS, FETCH_CONTACTS, COMMON_SEARCH } from './types.js';
+import { SAVE_CONTACT, SORT_CONTACTS, FETCH_CONTACTS, COMMON_SEARCH, UPDATE_CONTACT } from './types.js';
 
 
 export const saveContact = (contact)=>(dispatch)=>{
@@ -12,4 +12,9 @@ export const sortContacts = ( fields )=>(dispatch)=>{
 
 export const commonSearch = ( field ) => (dispatch) => {
     dispatch({ type: COMMON_SEARCH, payload: field })
+}
+
+export const updateContact = (contact) => (dispatch) => {
+
+    dispatch({ type: UPDATE_CONTACT, payload: contact })
 }

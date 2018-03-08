@@ -38,15 +38,22 @@ class CustomerForm extends React.Component {
     }
     handleSubmit = (e) => {
         e.preventDefault();
+        const { currentContactData } = this.props;
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                values.id = uniqid();
                 console.log('Received values of form: ', values);
                 if(this.state.imageUrl) {
                     values.photo.url = this.state.imageUrl;
                 }
-                this.props.saveContact(values)
-                //this.props.closeModal()
+                if (!currentContactData){
+                    values.id = uniqid();
+                    this.props.saveContact(values)
+                    //this.props.closeModal()
+                }else{
+                    values.id = currentContactData.id;
+                    this.props.updateContact(values)
+                    //this.props.closeModal()
+                }
             }else{
                 message.error(err);
             }
@@ -94,14 +101,7 @@ class CustomerForm extends React.Component {
             </Col>
         )
     }
-    // componentWillReceiveProps(nextProps){
-    //     console.log(nextProps, this.props)
-    //     const { currentContactData } = nextProps
-    //     if(currentContactData && currentContactData.id){
-    //         console.log(currentContactData.photo.url)
-    //         this.setState({ imageUrl: currentContactData.photo.url})
-    //     }
-    // }
+    
     render() {
         const { getFieldDecorator } = this.props.form;
         const { currentContactData } = this.props;

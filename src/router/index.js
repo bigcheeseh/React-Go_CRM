@@ -9,17 +9,18 @@ import CrmComponent from '../components/CRM/index';
 
 import Sider from '../containers/Sider'
 import SiderSearch from '../components/SiderSearch/index'
+import { isMobile } from 'react-device-detect';
 
 import { Layout } from 'antd';
 const {  Content } = Layout;
 
 class Index extends Component{
     state = {
-        collapsed: false,
+        collapsed: isMobile,
     };
     toggle = () => {
         this.setState({
-            collapsed: !this.state.collapsed,
+            collapsed: isMobile ? isMobile : !this.state.collapsed,
         });
     }
 

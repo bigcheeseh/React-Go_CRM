@@ -1,0 +1,54 @@
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: '100%';
+}
+.modal{
+    position: absolute;
+   
+    margin: auto;
+    padding: 0;
+    overflow: auto;
+    background: rgba(255,255,255,0);
+    border: none;
+}
+
+@media only screen and (min-width: 1100px){
+    .modal{
+        top: 10vh;
+        left: 20vw;
+        right: 20vw;
+        bottom: 10vh;
+    }
+}
+
+@media only screen and (min-width: 750px) and (max-width: 1100px){
+    .modal{
+        top: 5vh;
+        left: 10vw;
+        right: 10vw;
+        bottom: 3vh;
+    }
+}
+
+@media only screen and (min-width: 450px) and (max-width: 750px){
+    .modal{
+        top: 3vh;
+        left: 5vw;
+        right: 5vw;
+        bottom: 3vh;
+    }
+}
+
+
+@media only screen and (max-width: 450px){
+    .modal{
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+}

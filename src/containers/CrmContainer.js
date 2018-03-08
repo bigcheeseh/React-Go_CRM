@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { saveContact, commonSearch } from '../actions/index';
+import { saveContact, commonSearch, updateContact } from '../actions/index';
 
 const CrmContainer = (props) => (
 
@@ -10,9 +10,10 @@ const CrmContainer = (props) => (
 const mapStateToProps = ({contacts})=>{
         const { allContacts, sortedContacts } = contacts;
         
+        console.log(allContacts)
         return {
                 contacts: sortedContacts
             }
 }
 
-export default connect(mapStateToProps, { saveContact, commonSearch})(CrmContainer)
+export default connect(mapStateToProps, { saveContact, commonSearch, updateContact})(CrmContainer)

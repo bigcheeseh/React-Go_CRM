@@ -40,6 +40,23 @@ export default function(state=initialState, action){
             }
 
             return { ...state, sortedContacts: state.allContacts }
+
+        case 'UPDATE_CONTACT':
+
+                const update = state.allContacts.map(contact => {
+            
+                        if (contact.id === action.payload.id) {
+                            return action.payload
+                        }
+                    
+
+                    return contact
+                })
+
+                console.log(update)
+
+                return { allContacts: update, sortedContacts: update }
+           
         
         default:
             return state
