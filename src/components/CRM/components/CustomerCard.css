@@ -6,3 +6,7 @@
 .ant-card-bordered{
     border-top: 0 !important;
 }
+
+.personName:hover{
+    color: #1890ff;
+}

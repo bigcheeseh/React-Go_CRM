@@ -34,25 +34,30 @@ class CRM extends Component{
     state = {
         modalIsOpen: false,
         collapsed: false,
+        currentContactData: null
     };
     toggle = () => {
         this.setState({
-        collapsed: !this.state.collapsed,
+            collapsed: !this.state.collapsed,
         });
     }
     openModal= () => {
         this.setState({ modalIsOpen: true });
     }
-
+    openModalAndUpdate = (contact) => {
+        console.log(contact)
+        this.setState({ modalIsOpen: true, currentContactData: contact });
+    }
 
     closeModal= () => {
-        this.setState({ modalIsOpen: false });
+        this.setState({ modalIsOpen: false, currentContactData: null });
     }
 
     
     render(){
         const { title, saveContact, contacts } = this.props;
-       
+        const { currentContactData } = this.state;
+
         return(                  
                         <div>
                             <Row style={{ margin: '0 20px 20px 20px'}}>
@@ -82,7 +87,7 @@ class CRM extends Component{
                                     </div>
                                 </Col>
                             </Row>
-                            <CustomersTable contacts={contacts}/>
+                            <CustomersTable contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
                             <Modal
                                 isOpen={this.state.modalIsOpen}
                                 onAfterOpen={this.afterOpenModal}
@@ -104,8 +109,10 @@ class CRM extends Component{
                                 }}
                             >   
                                 <Alert message="Информация о контакте" type="info" style={{borderRadius: 0}}/>
-                                <CustomerCard style={{
-                                    width: '100%', height: '100%' }} closeModal={this.closeModal} saveContact={saveContact} />
+                                <CustomerCard style={{width: '100%', height: '100%' }} 
+                                              closeModal={this.closeModal} 
+                                              saveContact={saveContact}
+                                              currentContactData={currentContactData} />
                             
                             </Modal>
                         </div>

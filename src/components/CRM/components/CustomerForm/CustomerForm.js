@@ -4,6 +4,7 @@ import {
     Slider, Button, Upload, Icon, Rate, Input, Col, Row, message, DatePicker
 } from 'antd';
 import moment from 'moment';
+import uniqid from 'uniqid'
 
 import { fields, groups } from './config/fields';
 import './form.css'
@@ -39,7 +40,11 @@ class CustomerForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                values.id = uniqid();
                 console.log('Received values of form: ', values);
+                if(this.state.imageUrl) {
+                    values.photo.url = this.state.imageUrl;
+                }
                 this.props.saveContact(values)
                 //this.props.closeModal()
             }else{
@@ -69,6 +74,7 @@ class CustomerForm extends React.Component {
     }
     standartField = (field, wrapperSpan) => {
         const { getFieldDecorator } = this.props.form;
+        const { currentContactData } = this.props;
 
         return (
             <Col xs={24} sm={24} md={field.smallWindowSize} lg={field.size}>
@@ -80,6 +86,7 @@ class CustomerForm extends React.Component {
                         rules: [
                             { message: field.placeholder},
                         ],
+                        initialValue: currentContactData ? currentContactData[field.name] : '' 
                     })(
                         <Input name={field.name} placeholder={field.placeholder} type={field.type} />
                     )}
@@ -87,8 +94,23 @@ class CustomerForm extends React.Component {
             </Col>
         )
     }
+    // componentWillReceiveProps(nextProps){
+    //     console.log(nextProps, this.props)
+    //     const { currentContactData } = nextProps
+    //     if(currentContactData && currentContactData.id){
+    //         console.log(currentContactData.photo.url)
+    //         this.setState({ imageUrl: currentContactData.photo.url})
+    //     }
+    // }
     render() {
         const { getFieldDecorator } = this.props.form;
+        const { currentContactData } = this.props;
+        let currentUserImageUrl = null;
+
+        if (currentContactData && currentContactData.photo && currentContactData.photo.url){
+            currentUserImageUrl = currentContactData.photo.url
+        } 
+
         const formItemLayout = {
             labelCol: { lg: 6, md: 6, sm: 6 },
             wrapperCol: { sm: 18, md: 18, lg: 18 },
@@ -117,9 +139,10 @@ class CustomerForm extends React.Component {
                                     className="avatar-uploader"
                                     showUploadList={false}
                                     beforeUpload={beforeUpload}
+
                                     onChange={this.handleAvatarChange}
                                 >
-                                    {this.state.imageUrl ? <img src={this.state.imageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
+                                {this.state.imageUrl || currentUserImageUrl ? <img src={this.state.imageUrl ? this.state.imageUrl : currentUserImageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
                                 </Upload>
                             )}
                         </FormItem>
@@ -138,7 +161,7 @@ class CustomerForm extends React.Component {
                                 rules: [
                                     { message: 'Выберите группу' },
                                 ],
-                                initialValue: groups[0]
+                                initialValue: currentContactData ? currentContactData.group : groups[0]
                             })(
                                 <Select >
                                     {groups.map(group => (
@@ -160,7 +183,7 @@ class CustomerForm extends React.Component {
                         >
                             {getFieldDecorator('date', {
                                 rules: [{ type: 'object', message: 'Дата рождения!' }],
-                                initialValue: moment('27/01/1968', dateFormat)
+                                initialValue: currentContactData ? currentContactData.date : moment('27/01/1968', dateFormat)
                             })(
                                 <DatePicker format={dateFormat} />
                             )}

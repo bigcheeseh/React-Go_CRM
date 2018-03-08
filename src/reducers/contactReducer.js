@@ -11,17 +11,17 @@ export default function(state=initialState, action){
                 sortedContacts: [...state.allContacts, action.payload]
             }
         case 'SORT_CONTACTS':
-            const sortState = state.allContacts.map(contact=>{
-                for(let key in action.payload){
-                    if(action.payload[key] && !action.payload[key].includes(contact[key]) ){
+        const sortState = state.allContacts.map(contact=>{
+            for(let key in action.payload){
+                    if (action.payload[key] && key !== 'group' && action.payload[key].toLowerCase().trim() !== contact[key].toLowerCase().trim() ){
                        return null
+                    } else if (action.payload[key] && key === 'group' && !action.payload[key].includes(contact[key])) {
+                        return null
                     }
                 }
                 
                 return contact
             })
-            
-            console.log(sortState.filter(contact=>contact))
 
             return { ...state, sortedContacts: sortState.filter(contact=>contact) }
 
