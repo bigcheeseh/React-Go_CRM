@@ -10,8 +10,9 @@ const Header = (props) => (
             className="trigger"
             type={props.collapsed ? 'menu-unfold' : 'menu-fold'}
             onClick={props.toggle}
+
         />
-        <NavLink to='/auth'><Avatar icon="user" className="avatar"/></NavLink>
+        <NavLink to='/auth'><Avatar icon="user" className="avatar" /></NavLink>
     </div>
 ) 
 

@@ -5,7 +5,7 @@ import CustomersTable from './components/CustomersTable';
 
 import PropTypes from 'prop-types';
 
-import { Layout, Menu, Icon, Alert, Input, Col, Row, Button, Upload, notification } from 'antd';
+import { Layout, Menu, Icon, Alert, Input, Col, Row, Button, Upload, Tooltip } from 'antd';
 import './index.css'
 
 const { Header, Sider, Content } = Layout;
@@ -87,13 +87,17 @@ class CRM extends Component{
                                 <Col lg={4} md={8} sm={24} xs={24} style={{ marginBottom: '20px' }}>
                                     <div style={{display: 'flex', justifyContent: 'space-around'}}>
                                         <Upload
-                                            showUploadList={false}
-                                            name = 'file'
-                                            onChange={(file)=> console.log(file)}>
-                                            <Button type="primary" shape="circle" icon="download" />
-                                        </Upload> 
-                                        <Button type="primary" shape="circle" icon="tablet" title="выберите файл для импорта"/> 
-                                        <Button type="primary" shape="circle" icon="plus" onClick={this.openModal} />
+                                                showUploadList={false}
+                                                name = 'file'
+                                                onChange={(file)=> console.log(file)}>
+                                            <Tooltip title="выберите файл для импорта">
+                                                <Button type="primary" shape="circle" icon="download" />
+                                            </Tooltip> 
+                                        </Upload>
+                                        <Button type="primary" shape="circle" icon="tablet" />
+                                        <Tooltip title="добавить контакт"> 
+                                            <Button type="primary" shape="circle" icon="plus" onClick={this.openModal} />
+                                        </Tooltip>
                                     </div>
                                 </Col>
                             </Row>
