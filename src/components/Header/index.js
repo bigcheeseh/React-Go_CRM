@@ -1,5 +1,6 @@
 import React from 'react';
 import { Avatar, Icon } from 'antd';
+import { NavLink } from 'react-router-dom'
 import './header.css';
 
 
@@ -10,7 +11,7 @@ const Header = (props) => (
             type={props.collapsed ? 'menu-unfold' : 'menu-fold'}
             onClick={props.toggle}
         />
-        <p><Avatar icon="user" className="avatar"/></p>
+        <NavLink to='/auth'><Avatar icon="user" className="avatar"/></NavLink>
     </div>
 ) 
 

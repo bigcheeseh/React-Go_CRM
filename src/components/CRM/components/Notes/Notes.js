@@ -27,7 +27,7 @@ class Notes extends Component {
         const { updateContactBoolean, saveContact, updateContact } = this.props
         const { notes } = this.state;
 
-        if (!this.props.updateContactBoolean ){
+        if (!updateContactBoolean ){
 
             saveContact({notes})
         }else{
@@ -76,7 +76,7 @@ class Notes extends Component {
         this.setState({notes: [...nonChekedNotes]})
     }
 
-      componentWillUnmount=()=>{
+    componentWillUnmount=()=>{
            const { handleCurrentContactData } = this.props;
            const { notes } = this.state;
 

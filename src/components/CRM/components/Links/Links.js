@@ -29,7 +29,7 @@ class Links extends Component {
     handleSubmit = () => {
         const { updateContactBoolean, saveContact, updateContact } = this.props
         const { links } = this.state;
-        if (!this.props.updateContactBoolean){
+        if (!updateContactBoolean){
             saveContact({links})
         }else{
             updateContact({links})

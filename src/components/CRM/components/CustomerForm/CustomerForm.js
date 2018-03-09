@@ -73,7 +73,7 @@ class CustomerForm extends React.Component {
         });
     }
     normFile = (e) => {
-        console.log('Upload event:', e);
+        //console.log('Upload event:', e);
         if (e.file.status === 'uploading') {
                  this.setState({ loading: true });
                  return 'uploading';
@@ -124,8 +124,6 @@ class CustomerForm extends React.Component {
     }
     componentWillMount = () => {
         const { currentContactData } = this.props;
-
-        console.log(currentContactData)
 
         this.setState({currentContactData: currentContactData})
 

@@ -4,15 +4,18 @@ import { Switch, Route } from 'react-router-dom';
 import Header from '../containers/Header';
 import HeaderComponent from'../components/Header/index';
 
+import AuthContainer from '../containers/Auth';
+import AuthComponent from '../components/Auth/index';
+
 import CrmContainer from '../containers/CrmContainer';
 import CrmComponent from '../components/CRM/index';
 
 import Sider from '../containers/Sider'
 import SiderSearch from '../components/SiderSearch/index'
-import { isMobile } from 'react-device-detect';
 
+import { isMobile } from 'react-device-detect';
 import { Layout } from 'antd';
-const {  Content } = Layout;
+const { Content } = Layout;
 
 class Index extends Component{
     state = {
@@ -28,20 +31,38 @@ class Index extends Component{
       const { collapsed } = this.state;
       return(
         <Layout>
-            <Sider Layout={SiderSearch} collapsed={collapsed}/>
-            <Layout style={{ height: '100vh'}}>
-                <Header Layout={HeaderComponent} toggle={this.toggle} collapsed={collapsed}/>
-                <Content style={{ height: '100%', padding: '2% 0 0 0' }}>
+            
                     <Switch>
                         <Route
+                            exact
                             path="/"
-                            render={props => (
-                            <CrmContainer {...props} Layout={CrmComponent} />
-                            )}
+                            render={props => {
+                                
+                                return(
+                                        <Layout>
+                                        <Sider Layout={SiderSearch} collapsed={collapsed} />
+                                            <Layout style={{ height: '100vh' }}>
+                                                <Header Layout={HeaderComponent} toggle={this.toggle} collapsed={collapsed} />
+                                                <Content style={{ height: '100%', padding: '2% 0 0 0' }}>
+                                                    <CrmContainer {...props} Layout={CrmComponent} />
+                                                </Content>
+                                            </Layout>
+                                        </Layout>)
+                            }}
+                        />
+                        <Route
+                            path="/auth"
+                            render={props => {
+                                    return (
+                                        <Layout style={{ height: '100vh', width: '100%', background: '#55555522'}}>
+                                            <AuthContainer {...props} Layout={AuthComponent} />
+                                        </Layout>
+                                    )
+                                }
+                            }
                         />
                     </Switch>
-                </Content>
-            </Layout>
+                
         </Layout>
       )
     }

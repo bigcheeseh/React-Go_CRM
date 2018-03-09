@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Card, Alert, Button } from 'antd';
 import CustomerForm from './CustomerForm/CustomerForm.js'
-import Notes from './Notes/Notes.js'
-import Links from './Links/Links.js'
+import Notes from './Notes/Notes'
+import Links from './Links/Links'
+import Files from './Files/Files'
+
 import uniqid from 'uniqid'
 
 import './CustomerCard.css'
@@ -69,7 +71,8 @@ class CustomerCard extends Component {
                                 wrappedComponentRef={(form) => this.cardPage = form}/>,
             notes: <Notes {...cardPageProps}
                           ref={(notes) => this.cardPage = notes}/>,
-            files: <p>customer files</p>,
+            files: <Files {...cardPageProps} 
+                          ref={(files) => this.cardPage = files}/>,
             links: <Links {...cardPageProps}
                           ref={(links) => this.cardPage = links}/>,
         };
