@@ -4,6 +4,7 @@ import { Table } from 'antd';
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 
+import './Table.css';
 
 
 const columns = [{
@@ -58,11 +59,11 @@ const CustomersTable = ({contacts, openModalAndUpdate})=>{
                 getTdProps={(state, rowInfo, column, instance) => {
                                 return {
                                     onClick: (e, handleOriginal) => {
-                                        console.log('A Td Element was clicked!')
-                                        console.log('it produced this event:', e)
-                                        console.log('It was in this column:', column)
-                                        console.log('It was in this table instance:', instance)
-                                        console.log('It was in this row:', rowInfo)
+                                        // console.log('A Td Element was clicked!')
+                                        // console.log('it produced this event:', e)
+                                        // console.log('It was in this column:', column)
+                                        // console.log('It was in this table instance:', instance)
+                                        // console.log('It was in this row:', rowInfo)
 
                                         if (rowInfo && rowInfo.original && rowInfo.original.id){
                                             if (column.id === 'personName' || column.id === 'photo'){

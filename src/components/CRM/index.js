@@ -39,6 +39,7 @@ class CRM extends Component{
     state = {
         modalIsOpen: false,
         collapsed: false,
+        updateContactBoolean : false,
         currentContactData: null
     };
     toggle = () => {
@@ -49,19 +50,23 @@ class CRM extends Component{
     openModal= () => {
         this.setState({ modalIsOpen: true });
     }
-    openModalAndUpdate = (contact) => {
-        console.log(contact)
-        this.setState({ modalIsOpen: true, currentContactData: contact });
+    openModalAndUpdate =(contact) => {
+
+        this.setState({ currentContactData: contact, updateContactBoolean: true }, () => this.setState({ modalIsOpen: true }));
+
     }
 
     closeModal= () => {
-        this.setState({ modalIsOpen: false, currentContactData: null });
+        this.setState({ modalIsOpen: false, currentContactData: null, updateContactBoolean: false });
     }
 
+    componentWillMount() {
+        Modal.setAppElement('body');
+    }
     
     render(){
         const { title, saveContact, updateContact, contacts } = this.props;
-        const { currentContactData } = this.state;
+        const { currentContactData, updateContactBoolean } = this.state;
 
         return(                  
                         <div>
@@ -101,13 +106,14 @@ class CRM extends Component{
                                 className="modal"
                                 overlayClassName="overlay"
                             >   
-                    <Alert message="Информация о контакте" type="info" style={{borderRadius: '3px 3px 0 0'}}/>
+                                <Alert message="Информация о контакте" type="info" style={{borderRadius: '3px 3px 0 0'}}/>
                                 <CustomerCard style={{width: '100%', height: '100%', padding: '10px' }} 
                                               closeModal={this.closeModal} 
                                               saveContact={saveContact}
                                               updateContact={updateContact}
+                                              updateContactBoolean ={updateContactBoolean}
                                               currentContactData={currentContactData} />
-                            
+
                             </Modal>
                         </div>
 

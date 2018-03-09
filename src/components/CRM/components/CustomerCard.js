@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
-import { Card, Alert } from 'antd';
-import CustomerFrom from './CustomerForm/CustomerForm.js'
+import { Card, Alert, Button } from 'antd';
+import CustomerForm from './CustomerForm/CustomerForm.js'
 import Notes from './Notes/Notes.js'
+import Links from './Links/Links.js'
+import uniqid from 'uniqid'
+
 import './CustomerCard.css'
 
 const tabList = [{
@@ -18,25 +21,66 @@ const tabList = [{
     tab: 'Ссылки',
 }];
 
-const content = ({closeModal, saveContact, currentContactData, updateContact}) =>{ 
-
-    //console.log(props)
-    return {
-        main: <CustomerFrom closeModal={closeModal} saveContact={saveContact} currentContactData={currentContactData} updateContact={updateContact}/>,
-            files: <p>customer files</p>,
-            notes: <Notes />,
-            links: <p>customer links</p>
-    };
-}
-
 class CustomerCard extends Component {
     state = {
         titleKey: 'main',
+        currentContactData: null,
+        contact: {}
     }
     onTabChange = (key) => {
         
         this.setState({ titleKey: key });
     }
+
+    componentWillMount = () => {
+
+        this.setState({currentContactData: this.props.currentContactData})
+    }
+
+    handleCurrentContactData = (data) => {
+        this.setState({ currentContactData: {...this.state.currentContactData, ...data} })
+    }
+
+    saveContact = (values) => {
+        const { contact, currentContactData } = this.state;
+        values.id = uniqid()
+        this.setState({ contact: {...contact, ...currentContactData, ...values } }, ()=>{ 
+            console.log(this.state.contact)    
+            this.props.saveContact(this.state.contact)
+            this.props.closeModal()
+        })
+    }
+
+    updateContact = (values) => {
+        const { contact, currentContactData } = this.state; 
+        this.setState({ contact: {...contact, ...currentContactData, ...values} }, ()=>{ 
+            console.log(this.state.contact)    
+            this.props.updateContact(this.state.contact)
+            this.props.closeModal()
+        })
+    }
+    content = () => {
+        const { updateContactBoolean } = this.props
+        const { currentContactData } = this.state
+
+        const cardPageProps = { saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
+        return {
+            main: <CustomerForm {...cardPageProps}
+                                wrappedComponentRef={(form) => this.cardPage = form}/>,
+            notes: <Notes {...cardPageProps}
+                          ref={(notes) => this.cardPage = notes}/>,
+            files: <p>customer files</p>,
+            links: <Links {...cardPageProps}
+                          ref={(links) => this.cardPage = links}/>,
+        };
+    }
+    
+    componentWillUnmount = () => {
+
+        this.setState({ currentContactData: null })
+    }
+
+
     render() {
         return (
             <div>
@@ -45,7 +89,13 @@ class CustomerCard extends Component {
                     tabList={tabList}
                     onTabChange={(key) => { this.onTabChange(key); }}
                 >
-                    {content(this.props)[this.state.titleKey]}
+                    {this.content()[this.state.titleKey]}
+                    <div
+                        style={{ display: 'flex', justifyContent: 'flex-end' }}
+                    >
+                        <Button style={{ marginRight: '10px' }} onClick={() => this.props.closeModal()}>Отмена</Button>
+                        <Button type="primary" onClick={() => this.cardPage.handleSubmit()}>Сохранить</Button>
+                    </div>
                 </Card>
             </div>
         );

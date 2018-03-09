@@ -18,3 +18,18 @@ p{
 .personName:hover{
     color: #1890ff;
 }
+.list{
+    min-height: 300px;
+    display: flex; 
+    flex-wrap:wrap; 
+    flex-direction: column;
+}
+.listBox{
+    max-height: 290px; 
+    min-height: 265px; 
+    padding: 20px; 
+    overflow: auto; 
+    background: #1890ff05; 
+    border: 1px solid #1890ff; 
+    border-radius: 3px;
+}

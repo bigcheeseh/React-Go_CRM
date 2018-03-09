@@ -1,26 +1,47 @@
 import React, { Component } from 'react';
-import { Tag, Input, Tooltip, Icon, Button } from 'antd';
+import { Tag, Input, Tooltip, Icon, Button, List, Checkbox } from 'antd';
+import Note from './NoteItem';
+
+import moment from 'moment';
 
 const { TextArea } = Input;
+const IconText = Icon.Text;
 
-
-class Notes extends React.Component {
+class Notes extends Component {
     state = {
-        tags: ['Unremovable', 'Tag 2', 'Tag 3'],
+        notes: [],
         inputVisible: false,
         inputValue: '',
+        checked: false
     };
 
-    handleClose = (removedTag) => {
-        const tags = this.state.tags.filter(tag => tag !== removedTag);
-        console.log(tags);
-        this.setState({ tags });
+     componentWillMount = () => {
+        const { currentContactData } = this.props;
+
+        if(currentContactData && currentContactData.notes){
+
+            this.setState({notes: currentContactData.notes})
+        }
+     }
+    handleSubmit = () => {
+        const { updateContactBoolean, saveContact, updateContact } = this.props
+        const { notes } = this.state;
+
+        if (!this.props.updateContactBoolean ){
+
+            saveContact({notes})
+        }else{
+            updateContact({notes})
+        }
     }
 
     showInput = () => {
         this.setState({ inputVisible: true }, () => this.input.focus());
     }
-
+    handleCheckChange = () => {
+        console.log('checked')
+        this.setState({checked: true})
+    }
     handleInputChange = (e) => {
         this.setState({ inputValue: e.target.value });
     }
@@ -28,56 +49,85 @@ class Notes extends React.Component {
     handleInputConfirm = () => {
         const state = this.state;
         const inputValue = state.inputValue;
-        let tags = state.tags;
-        if (inputValue && tags.indexOf(inputValue) === -1) {
-            tags = [...tags, inputValue];
+        let notes = state.notes;
+        if (inputValue) {
+            const note = {}
+            
+            note.content = inputValue;
+            note.date = moment().format('DD.MM.YYYY HH:mm');
+            note.checked = false
+
+            notes = [...notes, note];
         }
-        console.log(tags);
+
         this.setState({
-            tags,
+            notes,
             inputVisible: false,
             inputValue: '',
         });
     }
 
     saveInputRef = input => this.input = input
+    removeCheckedNotes = () => {
+
+        const nonChekedNotes = this.state.notes.filter(note => !note.checked)
+
+
+        this.setState({notes: [...nonChekedNotes]})
+    }
+
+      componentWillUnmount=()=>{
+           const { handleCurrentContactData } = this.props;
+           const { notes } = this.state;
+
+           handleCurrentContactData({notes})
+    }
 
     render() {
-        const { tags, inputVisible, inputValue } = this.state;
-        return (
-            <div style={{minHeight: '300px'}}>
-                {tags.map((tag, index) => {
-                    const isLongTag = tag.length > 350;
-                    const tagElem = (
-                        <Tag style={{width: '100%', margin: '5px'}} key={tag} closable={index !== 0} afterClose={() => this.handleClose(tag)}>
-                            {isLongTag ? `${tag.slice(0, 350)}...` : tag}
-                        </Tag>
-                    );
-                    return isLongTag ? <Tooltip title={tag} key={tag}>{tagElem}</Tooltip> : tagElem;
-                })}
-                {inputVisible && (
-                    <div style={{margin: '10px', display: 'flex', justifyContent: 'space-between'}}>
-                        <TextArea
-                            ref={this.saveInputRef}
-                            type="text"
-                            style={{ width: '75%' }}
-                            value={inputValue}
-                            onChange={this.handleInputChange}
-                            onBlur={this.handleInputConfirm}
+        const { notes, inputVisible, inputValue } = this.state;
 
-                        />
-                        <Button type="primary" onClick={this.handleInputConfirm}>Добавить</Button>
-                    </div>
-                )}
-                {!inputVisible && (
-                    <Tag
-                        onClick={this.showInput}
-                        color="geekblue"
-                        style={{ borderStyle: 'dashed', margin: '10px' }}
-                    >
-                        <Icon type="plus" /> Добавить Заметку
-          </Tag>
-                )}
+        return (
+            <div className="list">
+                <div className="listBox">
+                    <List
+                        itemLayout="vertical"
+                        size="large"
+                        dataSource={notes}
+                        renderItem={item => (
+                            <List.Item>
+                                <Note item={item} handleCheckChange={this.handleCheckChange}/>
+                            </List.Item>
+                        )}
+                    />
+                </div>
+                <div style={{ marginTop: 'auto' }}>
+                    {inputVisible && (
+                        <div style={{margin: '10px', display: 'flex', justifyContent: 'space-between'}}>
+                            <TextArea
+                                ref={this.saveInputRef}
+                                type="text"
+                                style={{ width: '75%' }}
+                                value={inputValue}
+                                onChange={this.handleInputChange}
+                                onBlur={this.handleInputConfirm}
+
+                            />
+                            <Button type="primary" shape="circle" icon="plus" onClick={this.handleInputConfirm}/>
+                        </div>
+                    )}
+                    {!inputVisible && (
+                        <div style={{ margin: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                            <Tag
+                                onClick={this.showInput}
+                                color="geekblue"
+                                style={{ borderStyle: 'dashed', margin: '10px' }}
+                            >
+                                <Icon type="plus" /> Добавить Заметку
+                            </Tag>
+                            <Button type="danger" disabled={notes.filter(note => note.checked).length < 1} ghost onClick={this.removeCheckedNotes}>Удалить Заметки</Button>
+                        </div>
+                    )}
+                </div>
             </div>
         );
     }

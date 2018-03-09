@@ -34,25 +34,38 @@ function getBase64(img, callback) {
 class CustomerForm extends React.Component {
     state = {
         loading: false,
-        imageUrl: null
+        imageUrl: null,
+        currentContactData: null
     }
     handleSubmit = (e) => {
-        e.preventDefault();
-        const { currentContactData } = this.props;
+        
+        e ? e.preventDefault() : null;
+        const { currentContactData } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                if(this.state.imageUrl) {
-                    values.photo.url = this.state.imageUrl;
-                }
-                if (!currentContactData){
-                    values.id = uniqid();
+                if (!this.props.updateContactBoolean ){
+
+                    if(this.state.imageUrl) {
+                        if(!values.photo){
+                            values.photo = currentContactData.photo;
+                        }
+                        values.photo.url = this.state.imageUrl;
+                    }
+
+                    //values.id = uniqid();
                     this.props.saveContact(values)
-                    //this.props.closeModal()
+
                 }else{
                     values.id = currentContactData.id;
+                    
+                    if(!values.photo){
+                        values.photo = currentContactData.photo;
+                    }
+
+                    values.photo.url = this.state.imageUrl;
                     this.props.updateContact(values)
-                    //this.props.closeModal()
+
                 }
             }else{
                 message.error(err);
@@ -81,7 +94,7 @@ class CustomerForm extends React.Component {
     }
     standartField = (field, wrapperSpan) => {
         const { getFieldDecorator } = this.props.form;
-        const { currentContactData } = this.props;
+        const { currentContactData } = this.state;
 
         return (
             <Col xs={24} sm={24} md={field.smallWindowSize} lg={field.size}>
@@ -101,26 +114,59 @@ class CustomerForm extends React.Component {
             </Col>
         )
     }
-    
-    render() {
-        const { getFieldDecorator } = this.props.form;
-        const { currentContactData } = this.props;
-        let currentUserImageUrl = null;
 
-        if (currentContactData && currentContactData.photo && currentContactData.photo.url){
-            currentUserImageUrl = currentContactData.photo.url
-        } 
+    handleCurrentUserImage = () => {
+        const { currentContactData } = this.state;
+
+        this.setState({ imageUrl: currentContactData.photo.url})
+        
+        return currentContactData.photo.url
+    }
+    componentWillMount = () => {
+        const { currentContactData } = this.props;
+
+        console.log(currentContactData)
+
+        this.setState({currentContactData: currentContactData})
+
+        if (currentContactData && currentContactData.photo && currentContactData.photo.url) {
+            this.setState({ imageUrl: currentContactData.photo.url })
+        }
+    }
+    componentWillUnmount = () =>{
+        const { handleCurrentContactData } = this.props;
+        const { currentContactData } = this.state;
+
+        const values = this.props.form.getFieldsValue();
+
+        if (this.state.imageUrl && values.photo) {
+            values.photo.url = this.state.imageUrl;
+        }else if(currentContactData){
+            values.photo = currentContactData.photo
+        }
+
+        handleCurrentContactData(values)
+        
+    }
+
+  
+    render() {
+        const { getFieldDecorator, onValuesChange } = this.props.form;
+        const { currentContactData } = this.state;
+       
 
         const formItemLayout = {
             labelCol: { lg: 6, md: 6, sm: 6 },
             wrapperCol: { sm: 18, md: 18, lg: 18 },
         };
+        
         const uploadButton = (
             <div>
                 <Icon type={this.state.loading ? 'loading' : 'plus'} />
                 <div className="ant-upload-text">Фото</div>
             </div>
         );
+        
         const dateFormat ='DD/MM/YYYY'
         return (
             <Form onSubmit={this.handleSubmit}>
@@ -142,7 +188,7 @@ class CustomerForm extends React.Component {
 
                                     onChange={this.handleAvatarChange}
                                 >
-                                {this.state.imageUrl || currentUserImageUrl ? <img src={this.state.imageUrl ? this.state.imageUrl : currentUserImageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
+                                {this.state.imageUrl  ? <img src={this.state.imageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
                                 </Upload>
                             )}
                         </FormItem>
@@ -192,17 +238,13 @@ class CustomerForm extends React.Component {
                     </Col>
                     {this.standartField(fields.city, 20)}
                 </Row>
-               
                 
-              
-                
-                
-                    <FormItem
+                    {/* <FormItem
                      style={{display: 'flex', justifyContent: 'flex-end'}}
                     >   
                         <Button style={{marginRight: '10px'}} onClick={()=>this.props.closeModal()}>Отмена</Button>
                         <Button type="primary" htmlType="submit">Сохранить</Button>
-                    </FormItem>
+                    </FormItem> */}
             
             </Form>
         );
