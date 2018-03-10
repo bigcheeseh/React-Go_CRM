@@ -29,7 +29,11 @@ export default function(state=initialState, action){
             if(action.payload){
                 const commonSearch = state.allContacts.map(contact => {
                     for (let key in contact) {
-                        if (contact[key] && contact[key] === action.payload) {
+                        if (contact[key] && typeof contact[key] === "string"){
+                            if (contact[key].toLowerCase().trim() === action.payload.toLowerCase().trim()) {
+                                return contact
+                            }
+                        }else if (contact[key] && contact[key] === action.payload) {
                             return contact
                         }
                     }
@@ -52,8 +56,6 @@ export default function(state=initialState, action){
 
                     return contact
                 })
-
-                console.log(update)
 
                 return { allContacts: update, sortedContacts: update }
            

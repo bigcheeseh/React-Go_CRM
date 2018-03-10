@@ -13,8 +13,6 @@ class Auth extends Component {
                 console.log('Received values of form: ', values);
             }
 
-            console.log(this.props)
-
             this.props.history.push("/")
         });
     }

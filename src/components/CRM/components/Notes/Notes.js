@@ -39,7 +39,6 @@ class Notes extends Component {
         this.setState({ inputVisible: true }, () => this.input.focus());
     }
     handleCheckChange = () => {
-        console.log('checked')
         this.setState({checked: true})
     }
     handleInputChange = (e) => {

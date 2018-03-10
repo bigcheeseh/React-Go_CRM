@@ -17,11 +17,12 @@ class SiderComponent extends Component{
     }
     
     state = {
-        fieldsState: fieldsObj
+        fieldsState: fieldsObj,
+        collapsed: false
     }
 
     handleSearch = () => {
-        console.log(this.state.fieldsState, 'search')
+
         this.props.sortContacts(this.state.fieldsState)
     }
     handleClear = () => {
@@ -60,6 +61,12 @@ class SiderComponent extends Component{
             )
         }) 
     }
+    componentWillReceiveProps = (nextProps) => {
+        this.setState({ collapsed: nextProps.collapsed })
+    }
+    componentDidMount = () => {
+        this.setState({collapsed: this.props.collapsed})
+    }
     
     render(){
         
@@ -67,7 +74,7 @@ class SiderComponent extends Component{
             <Sider
                 trigger={null}
                 collapsible
-                collapsed={this.props.collapsed}
+                collapsed={this.state.collapsed}
                 width={275}
 
             >
@@ -77,7 +84,7 @@ class SiderComponent extends Component{
                       theme="dark"
                       //inlineCollapsed={false}
                       selectable={false}
-                      onOpenChange={(e) => { this.props.collapsed ? e[0] = "sub1" : null; console.log(e) }}
+                      onOpenChange={(e) => { this.state.collapsed ? e[0] = "sub1" : null; console.log(e) }}
                      
                       >
                     <SubMenu key="sub1" 

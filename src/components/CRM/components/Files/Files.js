@@ -49,7 +49,6 @@ class Files extends Component{
         
   }
   upload = (info, doc, percent) =>{
-    console.log(info)
 
     if (info.file.status !== 'uploading') {
 
@@ -78,7 +77,6 @@ class Files extends Component{
   )
   uploadFiles = (info) => {
       if (info.file.status !== 'uploading') {
-        //console.log(info.file, info.fileList);
 
       }
       if (info.file.originFileObj) {
