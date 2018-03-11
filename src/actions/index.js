@@ -1,4 +1,4 @@
-import { SAVE_CONTACT, SORT_CONTACTS, FETCH_CONTACTS, COMMON_SEARCH, UPDATE_CONTACT } from './types.js';
+import { SAVE_CONTACT, SORT_CONTACTS, FETCH_CONTACTS, COMMON_SEARCH, UPDATE_CONTACT, LOGIN, LOGOUT } from './types.js';
 
 
 export const saveContact = (contact)=>(dispatch)=>{
@@ -17,4 +17,15 @@ export const commonSearch = ( field ) => (dispatch) => {
 export const updateContact = (contact) => (dispatch) => {
 
     dispatch({ type: UPDATE_CONTACT, payload: contact })
+}
+
+
+export const login = (values) =>(dispatch)=>{
+
+    dispatch({ type: LOGIN, payload: {login: true, ...values} })
+}
+
+export const logout = () => (dispatch) => {
+
+    dispatch({ type: LOGOUT, payload: { login: false } })
 }

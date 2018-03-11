@@ -1,7 +1,9 @@
 .header{
     display: flex;
     justify-content: space-between;
+    align-items: center;   
     color: #1675ce;
+    height: 100%;
 }
 .ant-layout-header{
     background: #FAFAFA !important;
@@ -11,7 +13,6 @@
     background: #1675ce !important;
     box-shadow: 1px 1px 3px #555555;
     transition: box-shadow 0.2s linear;
-    margin: 0 8px;
 }
 
 .avatar:hover{

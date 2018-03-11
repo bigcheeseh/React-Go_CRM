@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { login } from '../actions/index'
 
 const Auth = (props) => {
     
@@ -8,4 +10,4 @@ const Auth = (props) => {
     )
 }
 
-export default Auth;
+export default connect(null, { login })(Auth);

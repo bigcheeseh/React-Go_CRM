@@ -4,6 +4,7 @@ import './auth.css'
 
 const FormItem = Form.Item;
 
+window.React = React;
 
 class Auth extends Component {
     handleSubmit = (e) => {
@@ -13,6 +14,7 @@ class Auth extends Component {
                 console.log('Received values of form: ', values);
             }
 
+            this.props.login(values)
             this.props.history.push("/")
         });
     }

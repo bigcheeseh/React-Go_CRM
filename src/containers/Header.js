@@ -1,10 +1,14 @@
 import React from 'react';
 import { Layout } from 'antd';
+import { connect } from 'react-redux';
+import { logout } from '../actions/index';
 
 const HeaderContainer = (props) => (
     <Layout.Header>
-        <props.Layout toggle={props.toggle} collapsed={props.collapsed}/>
+        <props.Layout {...props}/>
     </Layout.Header>
 )
 
-export default HeaderContainer;
+const mapStateToProps = ({ auth }) => ({ auth })
+
+export default connect(mapStateToProps, { logout })(HeaderContainer);
