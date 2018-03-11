@@ -50,7 +50,14 @@ const columns = [{
 const CustomersTable = ({contacts, openModalAndUpdate})=>{
     
         return (
-            <ReactTable 
+            <ReactTable
+                previousText={"предыдущая"}
+                nextText={"следующая"} 
+                loadingText= 'Загрузка...'
+                noDataText= 'Контактов не найдено'
+                pageText= 'Страница'
+                ofText= 'из'
+                rowsText= 'строк'
                 columns={columns} 
                 data={contacts} 
                 pagination={{ pageSize: 50 }} 
