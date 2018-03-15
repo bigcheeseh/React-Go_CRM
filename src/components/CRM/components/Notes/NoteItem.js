@@ -10,8 +10,7 @@ class Note extends Component{
     handleChange = (e) => {
         this.props.item.checked = e.target.checked; 
         
-        this.setState({ checked: e.target.checked })
-        this.props.handleCheckChange(); 
+        this.setState({ checked: e.target.checked }, ()=>this.props.handleCheckChange())
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -23,10 +22,10 @@ class Note extends Component{
         return (
             <div>
                 <div style={{ width: "100%", padding: '0 0 10px 10px', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between' }} >
-                    <div style={{ width: "90%", boxSizing: 'border-box', overflowWrap: 'break-word' }}>{item.content}</div>
+                    <div style={{ width: "90%", boxSizing: 'border-box', overflowWrap: 'break-word' }}>{item.text}</div>
                     <Checkbox checked={this.state.checked} onChange={this.handleChange} />
                 </div>
-                <span style={{ fontSize: '11px', color: '#888', padding: '0 0 0 10px' }}>{item.date}</span>
+                <span style={{ fontSize: '11px', color: '#888', padding: '0 0 0 10px' }}>{item.created}</span>
             </div>
         )
     }

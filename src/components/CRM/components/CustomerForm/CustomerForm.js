@@ -30,12 +30,14 @@ function getBase64(img, callback) {
     reader.readAsDataURL(img);
 }
 
+const dateFormat = 'MM-DD-YY'
 
 class CustomerForm extends React.Component {
     state = {
         loading: false,
         imageUrl: null,
-        currentContactData: null
+        currentContactData: null,
+
     }
     handleSubmit = (e) => {
         
@@ -44,29 +46,16 @@ class CustomerForm extends React.Component {
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                if (!this.props.updateContactBoolean ){
 
-                    if(this.state.imageUrl) {
-                        if(!values.photo){
-                            values.photo = currentContactData.photo;
-                        }
-                        values.photo.url = this.state.imageUrl;
-                    }
-
-                    //values.id = uniqid();
-                    this.props.saveContact(values)
-
-                }else{
-                    values.id = currentContactData.id;
                     
-                    if(!values.photo){
-                        values.photo = currentContactData.photo;
-                    }
+                values.notes = this.props.currentContact.notes;
+                values.links = this.props.currentContact.links;
+                values.group_id = groups.indexOf(values.group_name) + 1;
+                values.birth_date = moment(values.birth_date).format(dateFormat);                  
+                //values.photo.url = this.state.imageUrl;
+                this.props.updateContact(values)
 
-                    values.photo.url = this.state.imageUrl;
-                    this.props.updateContact(values)
 
-                }
             }else{
                 message.error(err);
             }
@@ -115,6 +104,10 @@ class CustomerForm extends React.Component {
         )
     }
 
+    componentWillReceiveProps=(nextProps)=>{
+        console.log(nextProps, 'current user')
+    }
+
     handleCurrentUserImage = () => {
         const { currentContactData } = this.state;
 
@@ -131,26 +124,59 @@ class CustomerForm extends React.Component {
             this.setState({ imageUrl: currentContactData.photo.url })
         }
     }
+    componentDidMount = () => {
+        if(!this.props.updateContactBoolean){
+            this.props.form.validateFields((err, values) => {
+                if (!err) {
+                    console.log('Received values of form: ', values);
+
+                        // if (this.state.imageUrl) {
+                        //     if (!values.photo) {
+                        //         values.photo = currentContactData.photo;
+                        //     }
+                        //     values.photo.url = this.state.imageUrl;
+                        // }
+
+                        values.group_id = groups.indexOf(values.group_name) + 1;
+                        values.birth_date = moment(values.birth_date).format(dateFormat);
+
+                        this.props.saveContact(values)
+                }
+
+            })
+        }
+    }
     componentWillUnmount = () =>{
-        const { handleCurrentContactData } = this.props;
+        const { handleCurrentContactData, currentContact } = this.props;
         const { currentContactData } = this.state;
 
         const values = this.props.form.getFieldsValue();
 
-        if (this.state.imageUrl && values.photo) {
-            values.photo.url = this.state.imageUrl;
-        }else if(currentContactData){
-            values.photo = currentContactData.photo
-        }
+        values.birth_date = moment(values.birth_date).format(dateFormat);
+        
+        // if (this.state.imageUrl && values.photo) {
+        //     values.photo.url = this.state.imageUrl;
+        // }else if(currentContactData){
+        //     values.photo = currentContactData.photo
+        // }
 
         handleCurrentContactData(values)
         
     }
 
-  
+    handleAvatarChange = (avatar)=>{
+        const { uploadFile, auth, id } = this.props;
+        console.log(avatar)
+
+        if (avatar.event && avatar.event.percent === 100){
+            uploadFile(avatar.file.originFileObj, 'photo', 'contact_photo', auth.token, id)
+        }
+    }
+   
     render() {
         const { getFieldDecorator, onValuesChange } = this.props.form;
         const { currentContactData } = this.state;
+        const { auth, id } = this.props;
        
 
         const formItemLayout = {
@@ -165,7 +191,7 @@ class CustomerForm extends React.Component {
             </div>
         );
         
-        const dateFormat ='DD/MM/YYYY'
+        
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Row>
@@ -178,9 +204,10 @@ class CustomerForm extends React.Component {
                                 getValueFromEvent: this.normFile,
                             })(
                                 <Upload
-                                    name="avatar"
+                                    name="contact-photo"
                                     listType="picture-card"
                                     className="avatar-uploader"
+                                    
                                     showUploadList={false}
                                     beforeUpload={beforeUpload}
 
@@ -192,8 +219,8 @@ class CustomerForm extends React.Component {
                         </FormItem>
                     </Col>
                     
-                    {this.standartField(fields.personName, 21)}
-                    {this.standartField(fields.tel, 18)}
+                    {this.standartField(fields.name, 21)}
+                    {this.standartField(fields.phone, 18)}
                     {this.standartField(fields.email, 18)}
                     
                     <Col xs={24} sm={24} md={24} lg={10}>
@@ -201,14 +228,14 @@ class CustomerForm extends React.Component {
                             {...formItemLayout}
                             label="Группа"
                         >
-                            {getFieldDecorator('group', {
+                            {getFieldDecorator('group_name', {
                                 rules: [
                                     { message: 'Выберите группу' },
                                 ],
-                                initialValue: currentContactData ? currentContactData.group : groups[0]
+                                initialValue: currentContactData ? currentContactData.group_name : groups[0]
                             })(
                                 <Select >
-                                    {groups.map(group => (
+                                    {groups.map((group, i) => (
                                             <Option key={group} value={group}>{group}</Option>
                                         )
                                     )}
@@ -225,9 +252,9 @@ class CustomerForm extends React.Component {
                             {...{ labelCol: { sm: 6, md: 6, lg: 8 }, wrapperCol: { sm: 18, md: 18, lg: 16 } }}
                             label="Дата Рождения"
                         >
-                            {getFieldDecorator('date', {
+                            {getFieldDecorator('birth_date', {
                                 rules: [{ type: 'object', message: 'Дата рождения!' }],
-                                initialValue: currentContactData ? currentContactData.date : moment('27/01/1968', dateFormat)
+                                initialValue: currentContactData ? moment(currentContactData.birth_date, dateFormat) : moment('01-27-68', dateFormat)
                             })(
                                 <DatePicker format={dateFormat} />
                             )}

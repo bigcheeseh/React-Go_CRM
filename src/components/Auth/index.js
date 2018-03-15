@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
 import './auth.css'
 
 const FormItem = Form.Item;
@@ -7,16 +7,49 @@ const FormItem = Form.Item;
 window.React = React;
 
 class Auth extends Component {
+    state = {
+        error: false
+    }
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+
                 console.log('Received values of form: ', values);
             }
 
             this.props.login(values)
-            this.props.history.push("/")
         });
+    }
+    shouldComponentUpdate(nextProps, nextState){
+
+        if(nextProps.auth !== this.props.auth){
+
+            nextState.error && nextProps.auth.error ? message.error('пользователь с таким именем и паролем не найден') : null
+
+            return true
+        }
+        
+        if(nextProps !== this.props){
+            return true
+        }
+        return false
+    }
+    componentWillReceiveProps = (nextProps) =>{
+        const { auth, history } = nextProps;
+
+        if(auth.login){
+            history.push('/')
+        }
+
+        if (auth.error) {
+            
+            this.setState({error: true})
+        }
+    }
+
+    componentWillUnmount = () => {
+        this.setState({ error: false })
     }
     render() {
         const { getFieldDecorator } = this.props.form;
@@ -24,10 +57,10 @@ class Auth extends Component {
                 <Form onSubmit={this.handleSubmit} className="login-form" style={{margin: 'auto', width: '100%'}}>
                     <h3 style={{textAlign: 'center', marginBottom: '20px'}}>Simple CRM</h3>
                     <FormItem >
-                        {getFieldDecorator('email', {
+                        {getFieldDecorator('name', {
                             rules: [{ required: true, message: 'Please input your username!' }],
                         })(
-                            <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" type="email"/>
+                            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="name" type="text"/>
                         )}
                     </FormItem>
                     <FormItem>

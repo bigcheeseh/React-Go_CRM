@@ -27,7 +27,8 @@ class CustomerCard extends Component {
     state = {
         titleKey: 'main',
         currentContactData: null,
-        contact: {}
+        contact: {},
+        contactId: 0
     }
     onTabChange = (key) => {
         
@@ -36,6 +37,11 @@ class CustomerCard extends Component {
 
     componentWillMount = () => {
 
+        if (this.props.currentContactData) {
+            console.log(this.props.currentContactData, 'current contact data')
+            this.setState({ contactId: this.props.currentContactData.id })
+        }
+       
         this.setState({currentContactData: this.props.currentContactData})
     }
 
@@ -45,37 +51,76 @@ class CustomerCard extends Component {
 
     saveContact = (values) => {
         const { contact, currentContactData } = this.state;
-        values.id = uniqid()
+        const { auth } = this.props;
+
         this.setState({ contact: {...contact, ...currentContactData, ...values } }, ()=>{ 
-            console.log(this.state.contact)    
-            this.props.saveContact(this.state.contact)
-            this.props.closeModal()
+
+            this.props.saveContact(this.state.contact, auth.token)
         })
     }
 
     updateContact = (values) => {
-        const { contact, currentContactData } = this.state; 
+        const { contact, currentContactData } = this.state;
+        const { auth, currentContact } = this.props;
+        let { id } = currentContact;
+
+        if(!id){
+            id  = currentContactData.id
+        }
+
         this.setState({ contact: {...contact, ...currentContactData, ...values} }, ()=>{ 
-            console.log(this.state.contact)    
-            this.props.updateContact(this.state.contact)
+   
+            this.props.updateContact(this.state.contact, auth.token, id)
             this.props.closeModal()
         })
     }
-    content = () => {
-        const { updateContactBoolean } = this.props
-        const { currentContactData } = this.state
 
-        const cardPageProps = { saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
+    closeModal = () => {
+        const { updateContactBoolean, currentContact, deleteContact, auth } = this.props
+
+        if (!updateContactBoolean){
+            deleteContact(auth.token, currentContact.id)
+        }
+        this.props.closeModal()
+    }
+    content = () => {
+        const { uploadFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
+        const { currentContactData, contactId } = this.state
+
+        const cardPageProps = { id: contactId, currentContact, auth, fetchContact, clearLinks, clearNotes, notes, links, addNote, addLink, deleteNote, deleteLink, saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
         return {
-            main: <CustomerForm {...cardPageProps}
-                                wrappedComponentRef={(form) => this.cardPage = form}/>,
+            main:  <CustomerForm {...cardPageProps}
+                          wrappedComponentRef={(form) => this.cardPage = form}
+                          uploadFile={uploadFile}/>,
             notes: <Notes {...cardPageProps}
+                          name="notes"
                           ref={(notes) => this.cardPage = notes}/>,
-            files: <Files {...cardPageProps} 
+            files: <Files {...cardPageProps}
+                          uploadFile={uploadFile}
+                          name="files"
                           ref={(files) => this.cardPage = files}/>,
             links: <Links {...cardPageProps}
+                          name="links"
                           ref={(links) => this.cardPage = links}/>,
         };
+    }
+
+    componentWillReceiveProps = (nextProps) =>{
+        const {notes, links, setNotes, setLinks } = this.props
+        console.log(this.cardPage)
+        if(nextProps.currentContact.notes && nextProps.currentContact.notes !== this.props.currentContact.notes && this.cardPage.props.name === 'notes'){
+            setNotes(nextProps.currentContact.notes)
+        }
+
+        if (nextProps.currentContact.links && nextProps.currentContact.links !== this.props.currentContact.links && this.cardPage.props.name === 'links') {
+            setLinks(nextProps.currentContact.links)
+        }
+
+       
+
+        if (nextProps.currentContact && nextProps.currentContact !== this.props.currentContact) {
+            this.setState({ contactId: nextProps.currentContact.id })
+        }
     }
     
     componentWillUnmount = () => {
@@ -96,7 +141,7 @@ class CustomerCard extends Component {
                     <div
                         style={{ display: 'flex', justifyContent: 'flex-end' }}
                     >
-                        <Button style={{ marginRight: '10px' }} onClick={() => this.props.closeModal()}>Отмена</Button>
+                        <Button style={{ marginRight: '10px' }} onClick={() => this.closeModal()}>Отмена</Button>
                         <Button type="primary" onClick={() => this.cardPage.handleSubmit()}>Сохранить</Button>
                     </div>
                 </Card>

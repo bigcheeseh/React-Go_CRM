@@ -10,4 +10,6 @@ const Auth = (props) => {
     )
 }
 
-export default connect(null, { login })(Auth);
+const mapStateToProps = ({ auth }) => ({ auth })
+
+export default connect(mapStateToProps, { login })(Auth);

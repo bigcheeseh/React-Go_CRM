@@ -40,8 +40,7 @@ class SiderComponent extends Component{
                                 <Select defaultValue={fieldsState[field.name]}
                                         mode="multiple" 
                                         onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e}})} 
-                                        name={field.name} 
-                                        style={{ width: '100%' }}>                                 
+                                        name={field.name} >                                 
                                             {field.content.map((group, i) => (
                                                 <Option ref={group} style={{display: 'block'}} key={group} value={group}>{group}</Option>
                                                 
@@ -76,7 +75,6 @@ class SiderComponent extends Component{
                 collapsible
                 collapsed={this.state.collapsed}
                 width={275}
-
             >
                 <div className="logo" />
                 <Menu defaultOpenKeys={['sub1']}

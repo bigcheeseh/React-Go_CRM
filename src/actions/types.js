@@ -1,8 +1,33 @@
 export const SAVE_CONTACT = "SAVE_CONTACT";
 export const SORT_CONTACTS = "SORT_CONTACTS";
 export const FETCH_CONTACTS = "FETCH_CONTACTS";
+export const FETCH_CONTACT ="FETCH_CONTACT"; 
+export const DELETE_CONTACT = "DELETE_CONTACT";
 export const COMMON_SEARCH = "COMMON_SEARCH";
-export const UPDATE_CONTACT = "UPDATE_CONTACT"
+export const UPDATE_CONTACT = "UPDATE_CONTACT";
+export const ADD_LINK = "ADD_LINK";
+export const ADD_LINK_ERROR = "ADD_LINK_ERROR";
+export const ADD_NOTE ="ADD_NOTE";
+export const ADD_NOTE_ERROR ="ADD_NOTE_ERROR";
+export const UPLOAD_FILE ="UPLOAD_FILE";
+export const UPLOAD_FILE_ERROR = "UPLOAD_FILE_ERROR";
 
-export const LOGIN = "LOGIN"
-export const LOGOUT = "LOGOUT"
+export const SET_NOTES = "SET_NOTES"
+export const SET_LINKS = "SET_LINKS"
+export const CLEAR_NOTES="CLEAR_NOTES"
+export const CLEAR_LINKS="CLEAR_LINKS"
+
+export const DELETE_LINK = "DELETE_LINK";
+export const DELETE_LINK_ERROR = "DELETE_LINK_ERROR"; 
+
+export const DELETE_NOTE = "DELETE_NOTE";
+export const DELETE_NOTE_ERROR = "DELETE_NOTE_ERROR";
+
+export const FETCH_CONTACTS_ERROR = 'FETCH_CONTACTS_ERROR';
+export const FETCH_CONTACT_ERROR = "FETCH_CONTACT_ERROR"  
+export const SAVE_CONTACT_ERROR = 'SAVE_CONTACT_ERROR';
+export const UPDATE_CONTACT_ERROR = 'UPDATE_CONTACT_ERROR';
+export const DELETE_CONTACT_ERROR = "DELETE_CONTACT_ERROR";
+
+export const LOGIN = "LOGIN";
+export const LOGOUT = "LOGOUT";

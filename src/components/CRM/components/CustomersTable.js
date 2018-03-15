@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Table } from 'antd';
 
 import ReactTable from "react-table";
@@ -20,14 +20,14 @@ const columns = [{
                             </div>
 },{
     Header: 'ФИО',
-    accessor: 'personName',
+    accessor: 'name',
     width: 300,
-        Cell: ({ original }) => <div style={{ cursor: 'pointer'}} className="personName">
-                                    <p>{original.personName}</p>
+    Cell: ({ original }) => <div style={{ cursor: 'pointer'}} className="personName">
+                                    <p>{original.name}</p>
                                 </div>
 }, {
     Header: 'Группа',
-    accessor: 'group'
+    accessor: 'group_name'
 }, {
     Header: 'Индустрия',
     accessor: 'industry'
@@ -42,15 +42,58 @@ const columns = [{
     }, 
 {
     Header: 'Телефон',
-    accessor: 'tel'
+    accessor: 'phone'
     
 }];
 
+// const notes = [{
 
-const CustomersTable = ({contacts, openModalAndUpdate})=>{
+//     Header: 'Заметки',
+//     accessor: 'content'
+// }]
+
+// const links = [{
+//     Header: 'Ссылки',
+//     accessor: 'link',
+//     Cell: (row)=>console.log(row)
+// }];
+
+class CustomersTable extends Component{
     
+    state = {
+        data:[],
+        pages: -1,
+        loading: false
+    }
+
+    componentWillReceiveProps(nextProps){
+        if (nextProps.commonSearchValue !== this.props.commonSearchValue) {
+
+            this.ReactTable.props.onFetchData(this.ReactTable.state, null, nextProps.commonSearchValue)
+        }
+
+        if(nextProps.contacts){
+            this.setState({data: nextProps.contacts, pages: nextProps.contacts.length, loading: false})
+        }
+
+      
+    }
+
+    shouldComponentUpdate(nextProps, nextState){
+        if(nextState.data !== this.state.data){
+            return true
+        }
+
+        return false
+    }
+
+    render(){
+        const { openModalAndUpdate, auth, fetchContacts } = this.props;
+        //console.log(this.state.any_field)
         return (
             <ReactTable
+
+                ref={(table)=> this.ReactTable = table}
                 previousText={"предыдущая"}
                 nextText={"следующая"} 
                 loadingText= 'Загрузка...'
@@ -58,8 +101,22 @@ const CustomersTable = ({contacts, openModalAndUpdate})=>{
                 pageText= 'Страница'
                 ofText= 'из'
                 rowsText= 'строк'
+                pageSizeOptions = {[50]}
+                defaultPageSize = {50}
                 columns={columns} 
-                data={contacts} 
+                data={this.state.data}
+                pages={this.state.pages}
+                loading={this.state.loading}
+                manual
+                onFetchData={(state, instance, searchValue) => {
+                    //console.log(state.sorted, state.filtered)
+                    if (auth.login) {
+                        this.setState({loading: true})
+                        fetchContacts(auth.token, state.pageSize, state.page * state.pageSize, state.sorted, searchValue)
+                    }
+                
+                }}
+                
                 pagination={{ pageSize: 50 }} 
                 scroll={{ y: 240 }} 
                 style={{ height: "72vh"}} // This will force the table body to overflow and scroll, since there is not enough room 
@@ -73,7 +130,7 @@ const CustomersTable = ({contacts, openModalAndUpdate})=>{
                                         // console.log('It was in this row:', rowInfo)
 
                                         if (rowInfo && rowInfo.original && rowInfo.original.id){
-                                            if (column.id === 'personName' || column.id === 'photo'){
+                                            if (column.id === 'name' || column.id === 'photo'){
                                                 openModalAndUpdate(rowInfo.original);
                                             }
                                         }
@@ -90,6 +147,7 @@ const CustomersTable = ({contacts, openModalAndUpdate})=>{
                             }}
             />
         )
+    }
     
 }
 

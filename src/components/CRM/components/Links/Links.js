@@ -15,25 +15,19 @@ class Links extends Component {
         link: '',
         linkName: '',
         prefix: 'https://',
-        checked: false
+        checked: false,
+        contactId: 0
     };
 
-     componentWillMount = () => {
-        const { currentContactData } = this.props;
+    componentWillMount = () => {
+        const { currentContact, currentContactData, fetchContact, auth } = this.props;
 
-        if(currentContactData && currentContactData.links){
 
-            this.setState({links: currentContactData.links})
-        }
-     }
+        fetchContact(auth.token, this.props.id)
+
+    }
     handleSubmit = () => {
-        const { updateContactBoolean, saveContact, updateContact } = this.props
-        const { links } = this.state;
-        if (!updateContactBoolean){
-            saveContact({links})
-        }else{
-            updateContact({links})
-        }
+    
     }
 
     showInput = () => {
@@ -48,7 +42,7 @@ class Links extends Component {
     handleInputConfirm = (e) => {
 
         e.preventDefault()
-
+        const { addLink, auth, currentContact, currentContactData, id } = this.props
         const state = this.state;
         const { link, linkName, prefix } = state;
         let links = state.links;
@@ -59,14 +53,11 @@ class Links extends Component {
         }else if (link && linkName) {
             const item = {}
             
-            item.link = prefix + link;
             item.name = linkName
-            item.checked = false
+            item.addr = prefix + link;
 
-            links = [...links, item];
-
+            addLink(item, auth.token, id)
             this.setState({
-                links,
                 inputVisible: false,
                 link: '',
                 linkName: ''
@@ -80,8 +71,15 @@ class Links extends Component {
 
     saveInputRef = input => this.input = input
     removeCheckedLinks = () => {
-        const nonChekedLinks = this.state.links.filter(link => !link.checked)
-        this.setState({links: [...nonChekedLinks]})
+        const { deleteLink, auth, id } = this.props
+        // const id = this.state.contactId;
+
+        const chekedLinks = this.state.links.filter(links => links.checked)
+
+        chekedLinks.map(link => {
+            deleteLink(auth.token, id, link.id)
+        })
+
     }
     selectBefore = () => (
         <Select ref="prefix" defaultValue="https://" style={{ width: 90 }} onChange={(e)=>this.setState({prefix: e})}>
@@ -89,12 +87,24 @@ class Links extends Component {
             <Option value="https://">https://</Option>
         </Select>
         );
+    componentWillReceiveProps = (nextProps) => {
 
-    componentWillUnmount=()=>{
-           const { handleCurrentContactData } = this.props;
-           const { links } = this.state;
+        console.log(nextProps.links)
 
-           handleCurrentContactData({links})
+        if (nextProps.links && nextProps.links !== this.state.links) {
+            this.setState({ links: nextProps.links })
+        }
+    }
+    componentWillUnmount = () => {
+        this.props.clearLinks()
+    }
+    shouldComponentUpdate = (nextProps, nextState) => {
+
+            if (nextState !== this.state) {
+                return true
+            
+            }
+            return false
     }
     render() {
         const { inputVisible, links, link, linkName, prefix } = this.state;

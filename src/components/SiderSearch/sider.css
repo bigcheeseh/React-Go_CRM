@@ -46,6 +46,12 @@
   height: 105px !important;
 }
 
+.ant-select-selection{
+  max-height: 60px !important;
+  overflow: auto;
+  min-width: 225px;
+  max-width: 235px;
+}
 
 .ant-select-selection__choice{
   background-color: rgb(15, 31, 104) !important;

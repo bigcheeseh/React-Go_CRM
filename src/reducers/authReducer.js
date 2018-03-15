@@ -1,7 +1,8 @@
 const initialState = {
     login: false,
-    email: '',
-    token: ''
+    name: '',
+    token: '',
+    error: false
 }
 
 export default function (state = initialState, action) {

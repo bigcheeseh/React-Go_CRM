@@ -31,16 +31,34 @@ class CRM extends Component{
         contacts: []
     }
     static propTypes = {
-        contacts: PropTypes.array.isRequired,
-        saveContact: PropTypes.func.isRequired,
-        updateContact: PropTypes.func.isRequired,
-        commonSearch: PropTypes.func.isRequired,
+            contacts: PropTypes.array.isRequired,
+            notes: PropTypes.array.isRequired,
+            links: PropTypes.array.isRequired,
+            currentContact: PropTypes.object.isRequired,
+            auth: PropTypes.object.isRequired,
+            fetchContacts: PropTypes.func.isRequired,
+            fetchContact: PropTypes.func.isRequired,
+            saveContact: PropTypes.func.isRequired,
+            updateContact: PropTypes.func.isRequired,
+            deleteContact: PropTypes.func.isRequired,
+            commonSearch: PropTypes.func.isRequired,
+            uploadFile: PropTypes.func.isRequired,
+            setNotes: PropTypes.func.isRequired,
+            setLinks: PropTypes.func.isRequired,
+            clearNotes: PropTypes.func.isRequired,
+            clearLinks: PropTypes.func.isRequired,
+            addNote: PropTypes.func.isRequired,
+            addLink: PropTypes.func.isRequired,
+            deleteNote: PropTypes.func.isRequired,
+            deleteLink: PropTypes.func.isRequired,
+
     }
     state = {
         modalIsOpen: false,
         collapsed: false,
         updateContactBoolean : false,
-        currentContactData: null
+        currentContactData: null,
+        commonSearchValue: ''
     };
     toggle = () => {
         this.setState({
@@ -62,11 +80,26 @@ class CRM extends Component{
 
     componentWillMount() {
         Modal.setAppElement('body');
+        const { auth, history, fetchContacts } = this.props;
+
+        // if(!auth.login){
+        //     history.push("/auth")
+        // }
+
+        
     }
+    componentWillReceiveProps = (nextProps) => {
+        const { auth, history } = nextProps;
+
+        // if (!auth.login) {
+        //     history.push('/auth')
+        // }
+
     
+    }
     render(){
-        const { title, saveContact, updateContact, contacts } = this.props;
-        const { currentContactData, updateContactBoolean } = this.state;
+        const { uploadFile, title, saveContact, updateContact, contacts, fetchContacts, fetchContact, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
+        const { currentContactData, updateContactBoolean, commonSearchValue } = this.state;
 
         return(                  
                         <div>
@@ -74,7 +107,7 @@ class CRM extends Component{
                                 <Col xs={24} sm={24} md={16} >
                                     <Search
                                         placeholder="Поиск по всем полям"
-                                        onSearch={value => this.props.commonSearch(value)}
+                                        onSearch={ value => this.setState({ commonSearchValue: value }) }
                                         enterButton="Найти"
                                         style={{zIndex: 0}}
                                     />
@@ -101,7 +134,7 @@ class CRM extends Component{
                                     </div>
                                 </Col>
                             </Row>
-                            <CustomersTable contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
+                            <CustomersTable auth={auth} commonSearchValue={commonSearchValue} fetchContacts={fetchContacts} contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
                             <Modal
                                 isOpen={this.state.modalIsOpen}
                                 onAfterOpen={this.afterOpenModal}
@@ -112,11 +145,26 @@ class CRM extends Component{
                             >   
                                 <Alert message="Информация о контакте" type="info" style={{borderRadius: '3px 3px 0 0'}}/>
                                 <CustomerCard style={{width: '100%', height: '100%', padding: '10px' }} 
-                                              closeModal={this.closeModal} 
+                                              closeModal={this.closeModal}
+                                              auth={auth}
+                                              uploadFile={uploadFile}
+                                              fetchContact={fetchContact} 
                                               saveContact={saveContact}
                                               updateContact={updateContact}
+                                              deleteContact={deleteContact}
                                               updateContactBoolean ={updateContactBoolean}
-                                              currentContactData={currentContactData} />
+                                              currentContactData={currentContactData}
+                                              currentContact={currentContact}
+                                              setNotes={setNotes}
+                                              setLinks={setLinks}
+                                              clearNotes={clearNotes}
+                                              clearLinks={clearLinks}
+                                              notes={notes} 
+                                              links={links}
+                                              addNote={addNote}
+                                              addLink={addLink}
+                                              deleteNote={deleteNote}
+                                              deleteLink={deleteLink}/>
 
                             </Modal>
                         </div>

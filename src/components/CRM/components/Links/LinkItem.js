@@ -10,8 +10,7 @@ class Link extends Component{
     handleChange = (e) => {
         this.props.item.checked = e.target.checked; 
         
-        this.setState({ checked: e.target.checked })
-        this.props.handleCheckChange(); 
+        this.setState({ checked: e.target.checked }, () => this.props.handleCheckChange());
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -25,10 +24,11 @@ class Link extends Component{
                 <div style={{ width: "100%", padding: '0 0 0 10px', boxSizing: 'border-box', display: 'flex', justifyContent: 'space-between' }} >
                     <div style={{ width: "90%", boxSizing: 'border-box', overflowWrap: 'break-word', display: 'flex', flexDirection: 'column' }}>
                         <label htmlFor="link">{item.name}</label>
-                        <a id="link" href={item.link} target="_blank">{item.link}</a>
+                        <a id="link" href={item.addr} target="_blank">{item.addr}</a>
                     </div>
                     <Checkbox checked={this.state.checked} onChange={this.handleChange} />
                 </div>
+                <span style={{ fontSize: '11px', color: '#888', padding: '0 0 0 10px' }}>{item.created}</span>
             </div>
         )
     }

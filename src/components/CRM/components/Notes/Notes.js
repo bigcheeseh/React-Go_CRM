@@ -15,27 +15,19 @@ class Notes extends Component {
         checked: false
     };
 
-     componentWillMount = () => {
-        const { currentContactData } = this.props;
+    componentWillMount = () => {
+        const { currentContact, currentContactData, fetchContact, auth } = this.props;
+        
 
-        if(currentContactData && currentContactData.notes){
-
-            this.setState({notes: currentContactData.notes})
-        }
-     }
+        fetchContact(auth.token, this.props.id)
+       
+    }
     handleSubmit = () => {
-        const { updateContactBoolean, saveContact, updateContact } = this.props
-        const { notes } = this.state;
-
-        if (!updateContactBoolean ){
-
-            saveContact({notes})
-        }else{
-            updateContact({notes})
-        }
+    
     }
 
     showInput = () => {
+
         this.setState({ inputVisible: true }, () => this.input.focus());
     }
     handleCheckChange = () => {
@@ -46,21 +38,21 @@ class Notes extends Component {
     }
 
     handleInputConfirm = () => {
+        const {addNote, auth, currentContact, currentContactData, id} = this.props
         const state = this.state;
         const inputValue = state.inputValue;
-        let notes = state.notes;
+        // const id = state.contactId;
+
         if (inputValue) {
             const note = {}
             
-            note.content = inputValue;
-            note.date = moment().format('DD.MM.YYYY HH:mm');
-            note.checked = false
+            note.text = inputValue;
 
-            notes = [...notes, note];
+            addNote(note, auth.token, id)
+            
         }
 
         this.setState({
-            notes,
             inputVisible: false,
             inputValue: '',
         });
@@ -68,18 +60,35 @@ class Notes extends Component {
 
     saveInputRef = input => this.input = input
     removeCheckedNotes = () => {
+        const { deleteNote, auth, currentContact, currentContactData, id } = this.props
+        // const id = this.state.contactId;
 
-        const nonChekedNotes = this.state.notes.filter(note => !note.checked)
+        const chekedNotes = this.state.notes.filter(note => note.checked)
 
+        chekedNotes.map(note=>{
+            deleteNote(auth.token, id, note.id)
+        })
 
-        this.setState({notes: [...nonChekedNotes]})
+    }
+
+    componentWillReceiveProps=(nextProps)=>{
+
+        if(nextProps.notes && nextProps.notes !== this.state.notes){
+            this.setState({notes: nextProps.notes})
+        }
+    }
+
+    shouldComponentUpdate = (nextProps, nextState)=>{
+
+        if(nextState.state!== this.state){
+            return true
+        }
+       
+        return false
     }
 
     componentWillUnmount=()=>{
-           const { handleCurrentContactData } = this.props;
-           const { notes } = this.state;
-
-           handleCurrentContactData({notes})
+         this.props.clearNotes()
     }
 
     render() {

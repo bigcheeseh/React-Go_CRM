@@ -32,7 +32,7 @@ const Header = (props) => {
 
             />
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                <p style={{margin: '0 5px'}}>{props.auth.email.slice(0, 25)}</p>
+                <p style={{margin: '0 5px'}}>{props.auth.name.slice(0, 25)}</p>
                 <Dropdown overlay={menu(props)} className="user_menu" placement="bottomLeft">
                     <Avatar icon="user" className="avatar" />
                 </Dropdown>
