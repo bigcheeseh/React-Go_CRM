@@ -12,20 +12,6 @@ const { Header, Sider, Content } = Layout;
 const { Search } = Input;
 
 
-// function beforeUpload(file) {
-//     const isLt2M = file.size / 1024 / 1024 < 4;
-//     if (!isLt2M) {
-//         message.error('Фото должно быть меньше 4мб!');
-//     }
-//     return isLt2M;
-// }
-
-// function getBase64(file, callback) {
-//     const reader = new FileReader();
-//     reader.addEventListener('load', () => callback(reader.result));
-//     reader.readAsDataURL(img);
-// }
-
 class CRM extends Component{
     static defaultProps = {
         contacts: []
@@ -34,15 +20,23 @@ class CRM extends Component{
             contacts: PropTypes.array.isRequired,
             notes: PropTypes.array.isRequired,
             links: PropTypes.array.isRequired,
+            files: PropTypes.object.isRequired,
             currentContact: PropTypes.object.isRequired,
             auth: PropTypes.object.isRequired,
             fetchContacts: PropTypes.func.isRequired,
             fetchContact: PropTypes.func.isRequired,
+            importContacts: PropTypes.func.isRequired,
+            exportContacts: PropTypes.func.isRequired,
             saveContact: PropTypes.func.isRequired,
             updateContact: PropTypes.func.isRequired,
             deleteContact: PropTypes.func.isRequired,
             commonSearch: PropTypes.func.isRequired,
+            sortContacts: PropTypes.func.isRequired,
+            extendedSearchValue: PropTypes.object.isRequired,
+            commonSearchValue: PropTypes.object.isRequired,
             uploadFile: PropTypes.func.isRequired,
+            fetchFile: PropTypes.func.isRequired,
+            deleteFile: PropTypes.func.isRequired,
             setNotes: PropTypes.func.isRequired,
             setLinks: PropTypes.func.isRequired,
             clearNotes: PropTypes.func.isRequired,
@@ -57,8 +51,7 @@ class CRM extends Component{
         modalIsOpen: false,
         collapsed: false,
         updateContactBoolean : false,
-        currentContactData: null,
-        commonSearchValue: ''
+        currentContactData: null
     };
     toggle = () => {
         this.setState({
@@ -97,9 +90,16 @@ class CRM extends Component{
 
     
     }
+
+    handleImportContacts = (upload)=> {
+        const { importContacts, auth } = this.props;
+        if (upload.event && upload.event.percent === 100) {
+            importContacts(upload.file.originFileObj, auth.token)
+        }
+    }
     render(){
-        const { uploadFile, title, saveContact, updateContact, contacts, fetchContacts, fetchContact, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
-        const { currentContactData, updateContactBoolean, commonSearchValue } = this.state;
+        const { extendedSearchValue, commonSearchValue, commonSearch, uploadFile, fetchFile, deleteFile, files, title, saveContact, updateContact, contacts, fetchContacts, sortContacts, fetchContact, importContacts, exportContacts, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
+        const { currentContactData, updateContactBoolean } = this.state;
 
         return(                  
                         <div>
@@ -107,7 +107,7 @@ class CRM extends Component{
                                 <Col xs={24} sm={24} md={16} >
                                     <Search
                                         placeholder="Поиск по всем полям"
-                                        onSearch={ value => this.setState({ commonSearchValue: value }) }
+                                        onSearch={ value =>  commonSearch(value)}
                                         enterButton="Найти"
                                         style={{zIndex: 0}}
                                     />
@@ -122,19 +122,19 @@ class CRM extends Component{
                                         <Upload
                                                 showUploadList={false}
                                                 name = 'file'
-                                                onChange={(file)=> console.log(file)}>
+                                                onChange={this.handleImportContacts}>
                                             <Tooltip title="выберите файл для импорта">
                                                 <Button type="primary" shape="circle" icon="download" />
                                             </Tooltip> 
                                         </Upload>
-                                        <Button type="primary" shape="circle" icon="tablet" />
+                                        <Button type="primary" shape="circle" icon="tablet" onClick={()=> exportContacts(auth.token, 50, 0)}/>
                                         <Tooltip title="добавить контакт"> 
                                             <Button type="primary" shape="circle" icon="plus" onClick={this.openModal} />
                                         </Tooltip>
                                     </div>
                                 </Col>
                             </Row>
-                            <CustomersTable auth={auth} commonSearchValue={commonSearchValue} fetchContacts={fetchContacts} contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
+                            <CustomersTable auth={auth} extendedSearchValue={extendedSearchValue} commonSearchValue={commonSearchValue} fetchContacts={fetchContacts} contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
                             <Modal
                                 isOpen={this.state.modalIsOpen}
                                 onAfterOpen={this.afterOpenModal}
@@ -148,6 +148,9 @@ class CRM extends Component{
                                               closeModal={this.closeModal}
                                               auth={auth}
                                               uploadFile={uploadFile}
+                                              fetchFile={fetchFile}
+                                              deleteFile={deleteFile}
+                                              files={files}
                                               fetchContact={fetchContact} 
                                               saveContact={saveContact}
                                               updateContact={updateContact}

@@ -7,6 +7,7 @@ import moment from 'moment';
 import uniqid from 'uniqid'
 
 import { fields, groups } from './config/fields';
+import base64ToString from 'base64-arraybuffer'
 import './form.css'
 
 
@@ -47,9 +48,6 @@ class CustomerForm extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
 
-                    
-                values.notes = this.props.currentContact.notes;
-                values.links = this.props.currentContact.links;
                 values.group_id = groups.indexOf(values.group_name) + 1;
                 values.birth_date = moment(values.birth_date).format(dateFormat);                  
                 //values.photo.url = this.state.imageUrl;
@@ -63,10 +61,10 @@ class CustomerForm extends React.Component {
     }
     normFile = (e) => {
         //console.log('Upload event:', e);
-        if (e.file.status === 'uploading') {
-                 this.setState({ loading: true });
-                 return 'uploading';
-        }
+        // if (e.file.status === 'uploading') {
+        //          this.setState({ loading: true });
+        //          return 'uploading';
+        // }
 
         if (e.file.originFileObj){
             getBase64(e.file.originFileObj, imageUrl => {
@@ -104,8 +102,15 @@ class CustomerForm extends React.Component {
         )
     }
 
-    componentWillReceiveProps=(nextProps)=>{
-        console.log(nextProps, 'current user')
+    componentWillReceiveProps=async(nextProps)=>{
+
+        if(nextProps.photo){
+            
+
+            console.log(nextProps.photo)
+            this.setState({ imageUrl: nextProps.photo })
+            
+        }
     }
 
     handleCurrentUserImage = () => {
@@ -166,10 +171,10 @@ class CustomerForm extends React.Component {
 
     handleAvatarChange = (avatar)=>{
         const { uploadFile, auth, id } = this.props;
-        console.log(avatar)
-
         if (avatar.event && avatar.event.percent === 100){
-            uploadFile(avatar.file.originFileObj, 'photo', 'contact_photo', auth.token, id)
+            this.normFile(avatar)
+            console.log(avatar)
+            uploadFile(avatar.file.originFileObj, avatar.file.originFileObj.name, 'contact_photo', auth.token, id)
         }
     }
    
@@ -199,10 +204,7 @@ class CustomerForm extends React.Component {
                         <FormItem
                             {...formItemLayout}
                         >
-                            {getFieldDecorator('photo', {
-                                valuePropName: 'file',
-                                getValueFromEvent: this.normFile,
-                            })(
+                            
                                 <Upload
                                     name="contact-photo"
                                     listType="picture-card"
@@ -213,9 +215,9 @@ class CustomerForm extends React.Component {
 
                                     onChange={this.handleAvatarChange}
                                 >
-                                {this.state.imageUrl  ? <img src={this.state.imageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
+                                {this.state.imageUrl? <img src={this.state.imageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
                                 </Upload>
-                            )}
+
                         </FormItem>
                     </Col>
                     

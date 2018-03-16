@@ -23,7 +23,7 @@ class Notes extends Component {
        
     }
     handleSubmit = () => {
-    
+        this.props.closeModal()
     }
 
     showInput = () => {

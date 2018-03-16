@@ -28,7 +28,8 @@ class CustomerCard extends Component {
         titleKey: 'main',
         currentContactData: null,
         contact: {},
-        contactId: 0
+        contactId: 0,
+        photo: ''
     }
     onTabChange = (key) => {
         
@@ -37,11 +38,16 @@ class CustomerCard extends Component {
 
     componentWillMount = () => {
 
-        if (this.props.currentContactData) {
-            console.log(this.props.currentContactData, 'current contact data')
-            this.setState({ contactId: this.props.currentContactData.id })
+        const { currentContactData, fetchFile, auth } = this.props;
+
+        if (currentContactData) {
+            console.log(currentContactData, 'current contact data')
+            this.setState({ contactId: currentContactData.id })
         }
-       
+        
+        if (currentContactData && currentContactData.photo){
+            fetchFile(currentContactData.photo, 'PHOTO', auth.token, currentContactData.id)
+        }
         this.setState({currentContactData: this.props.currentContactData})
     }
 
@@ -74,7 +80,17 @@ class CustomerCard extends Component {
             this.props.closeModal()
         })
     }
+    handleDeleteContact = () => {
 
+        const { auth, closeModal, deleteContact } = this.props
+
+        let confirm = window.confirm("Удалить Контакт?")
+
+        if(confirm){
+            deleteContact(auth.token, this.state.contactId);
+            closeModal()
+        }
+    }
     closeModal = () => {
         const { updateContactBoolean, currentContact, deleteContact, auth } = this.props
 
@@ -85,15 +101,17 @@ class CustomerCard extends Component {
     }
     content = () => {
         const { uploadFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
-        const { currentContactData, contactId } = this.state
+        const { currentContactData, contactId, photo } = this.state
 
         const cardPageProps = { id: contactId, currentContact, auth, fetchContact, clearLinks, clearNotes, notes, links, addNote, addLink, deleteNote, deleteLink, saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
         return {
             main:  <CustomerForm {...cardPageProps}
                           wrappedComponentRef={(form) => this.cardPage = form}
-                          uploadFile={uploadFile}/>,
+                          uploadFile={uploadFile}
+                          photo={photo}/>,
             notes: <Notes {...cardPageProps}
                           name="notes"
+                          closeModal={this.props.closeModal}
                           ref={(notes) => this.cardPage = notes}/>,
             files: <Files {...cardPageProps}
                           uploadFile={uploadFile}
@@ -101,6 +119,7 @@ class CustomerCard extends Component {
                           ref={(files) => this.cardPage = files}/>,
             links: <Links {...cardPageProps}
                           name="links"
+                          closeModal={this.props.closeModal}
                           ref={(links) => this.cardPage = links}/>,
         };
     }
@@ -116,7 +135,9 @@ class CustomerCard extends Component {
             setLinks(nextProps.currentContact.links)
         }
 
-       
+        if (nextProps.files.photo && nextProps.files.photo !== this.state.photo){
+            this.setState({ photo: nextProps.files.photo})
+        }
 
         if (nextProps.currentContact && nextProps.currentContact !== this.props.currentContact) {
             this.setState({ contactId: nextProps.currentContact.id })
@@ -138,11 +159,15 @@ class CustomerCard extends Component {
                     onTabChange={(key) => { this.onTabChange(key); }}
                 >
                     {this.content()[this.state.titleKey]}
-                    <div
-                        style={{ display: 'flex', justifyContent: 'flex-end' }}
-                    >
-                        <Button style={{ marginRight: '10px' }} onClick={() => this.closeModal()}>Отмена</Button>
-                        <Button type="primary" onClick={() => this.cardPage.handleSubmit()}>Сохранить</Button>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap'}}>
+                        <div>
+                            {this.props.updateContactBoolean ? <Button type="danger" onClick={() => this.handleDeleteContact()}>Удалить Контакт</Button> : null}
+                        </div>
+                        <div>
+                            <Button style={{ marginRight: '10px' }} onClick={() => this.closeModal()}>Отмена</Button>
+                            <Button type="primary" onClick={() => this.cardPage.handleSubmit()}>Сохранить</Button>
+                            
+                        </div>
                     </div>
                 </Card>
             </div>

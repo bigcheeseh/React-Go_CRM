@@ -67,10 +67,14 @@ class CustomersTable extends Component{
     }
 
     componentWillReceiveProps(nextProps){
-        if (nextProps.commonSearchValue !== this.props.commonSearchValue) {
+        if (nextProps.commonSearchValue && nextProps.commonSearchValue !== this.props.commonSearchValue && nextProps.commonSearchValue.any_field ) {
 
             this.ReactTable.props.onFetchData(this.ReactTable.state, null, nextProps.commonSearchValue)
+        } else if (nextProps.extendedSearchValue && nextProps.extendedSearchValue !== this.props.extendedSearchValue) {
+
+            this.ReactTable.props.onFetchData(this.ReactTable.state, null, nextProps.extendedSearchValue)
         }
+       
 
         if(nextProps.contacts){
             this.setState({data: nextProps.contacts, pages: nextProps.contacts.length, loading: false})

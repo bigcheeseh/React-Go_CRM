@@ -3,10 +3,15 @@ import { connect } from 'react-redux';
 import { 
          commonSearch, 
          saveContact,
-         uploadFile, 
+         uploadFile,
+         fetchFile,
+         deleteFile, 
          updateContact, 
          fetchContacts, 
-         fetchContact, 
+         fetchContact,
+         exportContacts,
+         importContacts,
+         sortContacts, 
          deleteContact, 
          setNotes, 
          setLinks, 
@@ -27,17 +32,20 @@ const CrmContainer = (props) => {
        
 }
 
-const mapStateToProps = ({contacts, auth, notes, links})=>{
-        const { allContacts, sortedContacts, currentContact } = contacts;
+const mapStateToProps = ({contacts, auth, notes, links, files})=>{
+        const { allContacts, sortedContacts, currentContact, extendedSearch, commonSearch} = contacts;
         
         console.log(allContacts)
         return {
                 contacts: sortedContacts,
                 currentContact,
+                extendedSearchValue: extendedSearch,
+                commonSearchValue: commonSearch,
                 auth,
                 notes,
-                links
+                links,
+                files
             }
 }
 
-export default connect(mapStateToProps, { uploadFile, saveContact, commonSearch, updateContact, fetchContacts, fetchContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, addNote, addLink, deleteNote, deleteLink })(CrmContainer)
+export default connect(mapStateToProps, { uploadFile, fetchFile, deleteFile, saveContact, commonSearch, updateContact, fetchContacts, importContacts, exportContacts, sortContacts, fetchContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, addNote, addLink, deleteNote, deleteLink })(CrmContainer)

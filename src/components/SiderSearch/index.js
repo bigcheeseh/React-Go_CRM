@@ -22,8 +22,9 @@ class SiderComponent extends Component{
     }
 
     handleSearch = () => {
-
+        //console.log(this.state.fieldsState)
         this.props.sortContacts(this.state.fieldsState)
+
     }
     handleClear = () => {
         this.setState( { fieldsState: { ... fieldsObj } }, () =>  this.props.sortContacts(this.state.fieldsState) )

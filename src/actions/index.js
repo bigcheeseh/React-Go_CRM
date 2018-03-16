@@ -1,8 +1,10 @@
 import{ 
         SAVE_CONTACT, 
-        SORT_CONTACTS, 
+        FILTR_CONTACTS, 
         FETCH_CONTACTS,
-        FETCH_CONTACT, 
+        FETCH_CONTACT,
+        EXPORT_CONTACTS,
+        IMPORT_CONTACTS, 
         DELETE_CONTACT,
         COMMON_SEARCH,
         UPLOAD_FILE,
@@ -15,7 +17,9 @@ import{
         UPDATE_CONTACT, 
         LOGIN, LOGOUT, 
         FETCH_CONTACTS_ERROR,
-        FETCH_CONTACT_ERROR, 
+        FETCH_CONTACT_ERROR,
+        EXPORT_CONTACTS_ERROR,
+        IMPORT_CONTACTS_ERROR, 
         SAVE_CONTACT_ERROR, 
         UPDATE_CONTACT_ERROR, 
         DELETE_CONTACT_ERROR,
@@ -31,18 +35,26 @@ import{
 
 import axios from 'axios';
 
+const API = 'https://simplecrmonline.cloud/api'
+
 export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dispatch) => {
-   
+
     axios(
             {
                 method: 'get',
-                url: 'http://80.211.159.16:8090/contacts',
+                url: `${API}/contacts`,
                 headers: {'X-CSRF-Token': token},
                 params:{
                     row_count,
                     offset,
-                    sort: sorted.length > 0 ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
-                    any_field: filtred ? filtred : ''
+                    sort:      sorted.length > 0 ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
+                    any_field: filtred && filtred.any_field ? filtred.any_field : null,
+                    name:      filtred && filtred.name      ? filtred.name : null,
+                    //group_name: filtred && filtred.group_name ? filtred.group_name : null,
+                    industry:  filtred && filtred.industry  ? filtred.industry : null,
+                    company:   filtred && filtred.company   ? filtred.company : null,
+                    position:  filtred && filtred.position  ? filtred.position : null,
+                    city:      filtred && filtred.city      ? filtred.city : null,
                 }
             }
         )
@@ -57,12 +69,73 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
 
 }
 
+export const importContacts = (file, token) => (dispatch) => {
+    console.log(file)
+    let fileFormData = new FormData();
+    fileFormData.append('файл', file)
+
+
+    axios(
+        {
+            method: 'post',
+            url: `${API}/contacts`,
+            headers: {'X-CSRF-Token': token, 'Content-Type': 'multipart/form-data' },
+            data: fileFormData
+
+        }
+    )
+        .then((response) => {
+
+            console.log(response)
+
+            dispatch({ type: IMPORT_CONTACTS, payload: response.data })
+        })
+        .catch((error) => {
+
+            dispatch({ type: IMPORT_CONTACTS_ERROR, payload: error })
+        })
+
+}
+
+
+export const exportContacts = (token, row_count, offset, sorted, filtred) => (dispatch) => {
+    console.log(token, row_count, offset, sorted, filtred)
+    axios(
+            {
+                method: 'get',
+                url: `${API}/export`,
+                headers: { 'X-CSRF-Token': token },
+                params: {
+                    row_count,
+                    offset,
+                //     sort:       sorted  && sorted.length > 0 ? `${sorted[0].id} ${sorted[0].desc ? "desc" : "asc"}` : null,
+                //     any_field:  filtred && filtred.any_field ? filtred.any_field : null,
+                //     name:       filtred && filtred.name      ? filtred.name : null,
+                //     //group_name: filtred && filtred.group_name ? filtred.group_name : null,
+                //     industry:   filtred && filtred.industry  ? filtred.industry : null,
+                //     company:    filtred && filtred.company   ? filtred.company : null,
+                //     position:   filtred && filtred.position  ? filtred.position : null,
+                //     city:       filtred && filtred.city      ? filtred.city : null,
+                }
+            }
+        )
+        .then((response) => {
+
+            dispatch({ type: EXPORT_CONTACTS, payload: response.data })
+        })
+        .catch((error) => {
+
+            dispatch({ type: EXPORT_CONTACTS_ERROR, payload: error })
+        })
+
+}
+
 export const fetchContact = (token, id) => (dispatch) => {
 
     axios(
             {
                 method: 'get',
-                url: `http://80.211.159.16:8090/contacts/${id}`,
+                url: `${API}/contacts/${id}`,
                 headers: { 'X-CSRF-Token': token },
             
             }
@@ -83,12 +156,12 @@ export const fetchContact = (token, id) => (dispatch) => {
 export const saveContact = (contact, token)=>(dispatch)=>{
     
 
-    contact = { ...contact, photo: '', application: '', esse: '', notes: [], links: []}
+    contact = { ...contact, application: '', esse: '', notes: [], links: []}
 
     axios(
             {
                 method: 'post',
-                url: 'http://80.211.159.16:8090/contacts',
+                url: `${API}/contacts`,
                 headers: { 'X-CSRF-Token': token, 'Content-Type': 'application/json' },
                 data: contact
             }
@@ -106,20 +179,26 @@ export const saveContact = (contact, token)=>(dispatch)=>{
 }
 
 export const sortContacts = ( fields )=>(dispatch)=>{
-    dispatch({ type: SORT_CONTACTS, payload: fields })
+
+    dispatch({ type: FILTR_CONTACTS, payload: fields })
 }
 
 export const commonSearch = ( field ) => (dispatch) => {
-    dispatch({ type: COMMON_SEARCH, payload: field })
+    const search = {}
+    search.any_field = field
+    
+    console.log(field, search)
+    dispatch({ type: COMMON_SEARCH, payload: search })
 }
 
 export const updateContact = (contact, token, id) => (dispatch) => {
 
     console.log(id, 'id', contact, token)
+    contact = { ...contact,  photo: '',application: '', esse: '', notes: [], links: [] }
     axios(
             {
                 method: 'post',
-                url: `http://80.211.159.16:8090/contacts/${id}`,
+                url: `${API}/contacts/${id}`,
                 headers: {'X-CSRF-Token': token, 'Content-Type': 'application/json' },
                 data: contact
             }
@@ -141,12 +220,12 @@ export const deleteContact = (token, id) => (dispatch) => {
     axios(
             {
                 method: 'delete',
-                url: `http://80.211.159.16:8090/contacts/${id}`,
+                url: `${API}/contacts/${id}`,
                 headers: { 'X-CSRF-Token': token }
             }
         )
         .then((response) => {
-
+            console.log(response)
             dispatch({ type: DELETE_CONTACT, payload: response.data })
         })
         .catch((error) => {
@@ -157,8 +236,6 @@ export const deleteContact = (token, id) => (dispatch) => {
 }
 
 export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) => {
-    
-    console.log(file, fileName, fileType, token, id)
 
     let fileFormData = new FormData();
     fileFormData.append(fileName, file)
@@ -166,11 +243,11 @@ export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) =>
     if(fileType){
         fileFormData.append('field', fileType)
     }
-    console.log(fileFormData)
+
     axios(
         {
             method: 'post',
-            url: `http://80.211.159.16:8090/contacts/${id}/files`,
+            url: `${API}/contacts/${id}/files`,
             data:fileFormData,
             headers: {
                 'X-CSRF-Token': token, 'Content-Type': 'multipart/form-data' 
@@ -187,6 +264,57 @@ export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) =>
         })
 
 }
+
+export const fetchFile = (fileName, fileType, token, id) => (dispatch) => {
+
+    
+    axios(
+            {
+                method: 'get',
+                url: `${API}/contacts/${id}/files/${fileName}`,
+                headers: {
+                    'X-CSRF-Token': token
+                }
+            }
+        )
+        .then((response) => {
+
+            console.log(response)
+            // var imageBase64 = btoa(response.data)
+            dispatch({ type: `FETCH_${fileType}`, payload: response.data})
+            
+        })
+        .catch((error) => {
+
+            dispatch({ type: 'FETCH_FILE_ERROR', payload: error })
+        })
+
+}
+
+export const deleteFile = (fileName, fileType, token, id) => (dispatch) => {
+
+
+    axios(
+        {
+            method: 'delete',
+            url: `${API}/contacts/${id}/files/${fileName}`,
+            headers: {
+                'X-CSRF-Token': token
+            }
+        }
+    )
+        .then((response) => {
+
+
+            dispatch({ type: `DELETE_${fileType}`, payload: response.data })
+        })
+        .catch((error) => {
+
+            dispatch({ type: 'FETCH_FILE_ERROR', payload: error })
+        })
+
+}
+
 
 export const setNotes = (notes) => (dispatch) => {
     
@@ -220,7 +348,7 @@ export const addNote = (note, token, id) => (dispatch) =>{
     axios(
             {
                 method:'post',
-                url: `http://80.211.159.16:8090/contacts/${id}/notes`,
+                url: `${API}/contacts/${id}/notes`,
                 headers:{'X-CSRF-Token': token, 'Content-Type': 'application/json' },
                 data: note
             }
@@ -239,7 +367,7 @@ export const deleteNote = (token, id, noteId) => (dispatch) =>{
     axios(
             {
                 method:'delete',
-                url: `http://80.211.159.16:8090/contacts/${id}/notes/${noteId}`,
+                url: `${API}/contacts/${id}/notes/${noteId}`,
                 headers:{'X-CSRF-Token': token}
             }
         )
@@ -257,7 +385,7 @@ export const addLink = (link, token, id) => (dispatch) =>{
     axios(
             {
                 method:'post',
-                url: `http://80.211.159.16:8090/contacts/${id}/links`,
+                url: `${API}/contacts/${id}/links`,
                 headers:{'X-CSRF-Token': token, 'Content-Type': 'application/json' },
                 data: link
             }
@@ -274,7 +402,7 @@ export const deleteLink = (token, id, linkId) => (dispatch) =>{
     axios(
             {
                 method:'delete',
-                url: `http://80.211.159.16:8090/contacts/${id}/links/${linkId}`,
+                url: `${API}/contacts/${id}/links/${linkId}`,
                 headers:{'X-CSRF-Token': token}
             }
         )
@@ -293,7 +421,7 @@ export const login = (values) =>(dispatch)=>{
     axios( 
             {  
                 method: 'post', 
-                url: 'http://80.211.159.16:8090/login', 
+                url: `${API}/login`, 
                 data: {
                     user_name: values.name, 
                     password: values.password

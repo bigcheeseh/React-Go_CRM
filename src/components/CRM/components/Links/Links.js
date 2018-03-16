@@ -27,7 +27,7 @@ class Links extends Component {
 
     }
     handleSubmit = () => {
-    
+        this.props.closeModal()
     }
 
     showInput = () => {
