@@ -6,8 +6,7 @@ import {
 import moment from 'moment';
 import uniqid from 'uniqid'
 
-import { fields, groups } from './config/fields';
-import base64ToString from 'base64-arraybuffer'
+import config from './config/fields';
 import './form.css'
 
 
@@ -18,9 +17,9 @@ const RadioGroup = Radio.Group;
 const InputGroup = Input.Group;
 
 function beforeUpload(file) { 
-    const isLt2M = file.size / 1024 / 1024 < 4;
+    const isLt2M = file.size / 1024 / 1024 < 1;
     if (!isLt2M) {
-        message.error('Фото должно быть меньше 4мб!');
+        message.error('Фото должно быть меньше 1мб!');
     }
     return isLt2M;
 }
@@ -37,18 +36,23 @@ class CustomerForm extends React.Component {
     state = {
         loading: false,
         imageUrl: null,
+        imageName:'',
         currentContactData: null,
+        fields:{},
+        groups:[],
+        groupsName:{},
+        groupsId:{}
 
     }
     handleSubmit = (e) => {
-        
+        const { groups, groupsName } = this.state
         e ? e.preventDefault() : null;
         const { currentContactData } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
 
-                values.group_id = groups.indexOf(values.group_name) + 1;
+                values.group_id = groupsName[values.group_name]
                 values.birth_date = moment(values.birth_date).format(dateFormat);                  
                 //values.photo.url = this.state.imageUrl;
                 this.props.updateContact(values)
@@ -60,17 +64,12 @@ class CustomerForm extends React.Component {
         });
     }
     normFile = (e) => {
-        //console.log('Upload event:', e);
-        // if (e.file.status === 'uploading') {
-        //          this.setState({ loading: true });
-        //          return 'uploading';
-        // }
 
         if (e.file.originFileObj){
             getBase64(e.file.originFileObj, imageUrl => {
 
                 this.setState({
-                    imageUrl,
+                    imageName: e.file.name,
                     loading: false,
                 })
 
@@ -102,34 +101,48 @@ class CustomerForm extends React.Component {
         )
     }
 
-    componentWillReceiveProps=async(nextProps)=>{
+    componentWillReceiveProps=(nextProps)=>{
+        const { id, auth, fetchFile, currentContactData } = this.props;
 
         if(nextProps.photo){
-            
-
-            console.log(nextProps.photo)
-            this.setState({ imageUrl: nextProps.photo })
-            
+ 
+            this.setState({ imageUrl: nextProps.photo[id] })    
         }
+
+         if(nextProps.uploaded){
+            fetchFile(this.state.imageName, 'PHOTO', auth.token, id);
+         }
+
+         if(nextProps.loading!==this.state.loading){
+            this.setState({loading: nextProps.loading})
+         }
     }
 
-    handleCurrentUserImage = () => {
-        const { currentContactData } = this.state;
+    // handleCurrentUserImage = () => {
+    //     const { currentContactData } = this.state;
 
-        this.setState({ imageUrl: currentContactData.photo.url})
+    //     this.setState({ imageUrl: currentContactData.photo.url})
         
-        return currentContactData.photo.url
-    }
+    //     return currentContactData.photo.url
+    // }
     componentWillMount = () => {
-        const { currentContactData } = this.props;
+        const { currentContactData, auth, id, fetchFile } = this.props;
+
+        config(auth.token)
+            .then(res => {
+                this.setState({fields: res.fields, groups: res.groups, groupsName: res.groupsName, groupsId: res.groupsId })
+            })
 
         this.setState({currentContactData: currentContactData})
 
-        if (currentContactData && currentContactData.photo && currentContactData.photo.url) {
-            this.setState({ imageUrl: currentContactData.photo.url })
+        if (currentContactData && currentContactData.photo){
+
+            fetchFile(currentContactData.photo, 'PHOTO', auth.token, id)
+            this.setState({loading: true})
         }
     }
     componentDidMount = () => {
+        const { groups } = this.state
         if(!this.props.updateContactBoolean){
             this.props.form.validateFields((err, values) => {
                 if (!err) {
@@ -152,18 +165,18 @@ class CustomerForm extends React.Component {
         }
     }
     componentWillUnmount = () =>{
-        const { handleCurrentContactData, currentContact } = this.props;
-        const { currentContactData } = this.state;
+        const { handleCurrentContactData, currentContact, clearFile } = this.props;
+        const { currentContactData, fields } = this.state;
+
+        //clearFile('PHOTO')
 
         const values = this.props.form.getFieldsValue();
 
         values.birth_date = moment(values.birth_date).format(dateFormat);
         
-        // if (this.state.imageUrl && values.photo) {
-        //     values.photo.url = this.state.imageUrl;
-        // }else if(currentContactData){
-        //     values.photo = currentContactData.photo
-        // }
+        if (this.state.imageName) {
+             values.photo = this.state.imageName;
+        }
 
         handleCurrentContactData(values)
         
@@ -173,14 +186,14 @@ class CustomerForm extends React.Component {
         const { uploadFile, auth, id } = this.props;
         if (avatar.event && avatar.event.percent === 100){
             this.normFile(avatar)
-            console.log(avatar)
+      
             uploadFile(avatar.file.originFileObj, avatar.file.originFileObj.name, 'contact_photo', auth.token, id)
         }
     }
    
     render() {
         const { getFieldDecorator, onValuesChange } = this.props.form;
-        const { currentContactData } = this.state;
+        const { currentContactData, fields, groups, groupsId } = this.state;
         const { auth, id } = this.props;
        
 
@@ -196,85 +209,90 @@ class CustomerForm extends React.Component {
             </div>
         );
         
-        
-        return (
-            <Form onSubmit={this.handleSubmit}>
-                <Row>
-                    <Col span={4}>
-                        <FormItem
-                            {...formItemLayout}
-                        >
-                            
-                                <Upload
-                                    name="contact-photo"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    
-                                    showUploadList={false}
-                                    beforeUpload={beforeUpload}
+        if(groups.length > 0 ){
+            return (
+                <Form onSubmit={this.handleSubmit}>
+                    <Row>
+                        <Col span={4}>
+                            <FormItem
+                                {...formItemLayout}
+                            >
+                                
+                                    <Upload
+                                        name="contact-photo"
+                                        listType="picture-card"
+                                        className="avatar-uploader"
+                                        
+                                        showUploadList={false}
+                                        beforeUpload={beforeUpload}
 
-                                    onChange={this.handleAvatarChange}
-                                >
-                                {this.state.imageUrl? <img src={this.state.imageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
-                                </Upload>
+                                        onChange={this.handleAvatarChange}
+                                    >
+                                    {this.state.imageUrl && !this.state.loading ? <img src={this.state.imageUrl} style={{width: 'inherit', maxHeight: '125px'}} alt="" /> : uploadButton}
+                                    </Upload>
 
-                        </FormItem>
-                    </Col>
-                    
-                    {this.standartField(fields.name, 21)}
-                    {this.standartField(fields.phone, 18)}
-                    {this.standartField(fields.email, 18)}
-                    
-                    <Col xs={24} sm={24} md={24} lg={10}>
-                        <FormItem
-                            {...formItemLayout}
-                            label="Группа"
-                        >
-                            {getFieldDecorator('group_name', {
-                                rules: [
-                                    { message: 'Выберите группу' },
-                                ],
-                                initialValue: currentContactData ? currentContactData.group_name : groups[0]
-                            })(
-                                <Select >
-                                    {groups.map((group, i) => (
-                                            <Option key={group} value={group}>{group}</Option>
-                                        )
-                                    )}
-                                </Select>
-                            )}
-                        </FormItem>
-                    
-                    </Col>
-                    {this.standartField(fields.industry, 16)}
-                    {this.standartField(fields.company, 18)}
-                    {this.standartField(fields.position, 18)}
-                    <Col xs={24} sm={24} md={24} lg={12}>
-                        <FormItem
-                            {...{ labelCol: { sm: 6, md: 6, lg: 8 }, wrapperCol: { sm: 18, md: 18, lg: 16 } }}
-                            label="Дата Рождения"
-                        >
-                            {getFieldDecorator('birth_date', {
-                                rules: [{ type: 'object', message: 'Дата рождения!' }],
-                                initialValue: currentContactData ? moment(currentContactData.birth_date, dateFormat) : moment('01-27-68', dateFormat)
-                            })(
-                                <DatePicker format={dateFormat} />
-                            )}
-                        </FormItem>
+                            </FormItem>
+                        </Col>
+                        
+                        {this.standartField(fields.name, 21)}
+                        {this.standartField(fields.phone, 18)}
+                        {this.standartField(fields.email, 18)}
+                        
+                        <Col xs={24} sm={24} md={24} lg={10}>
+                            <FormItem
+                                {...formItemLayout}
+                                label="Группа"
+                            >
+                                {getFieldDecorator('group_name', {
+                                    rules: [
+                                        { message: 'Выберите группу' },
+                                    ],
+                                    initialValue: currentContactData ? groupsId[currentContactData.group_id] : groups[0].name
+                                })(
+                                    <Select >
+                                        {groups.map((group, i) => (
+                                                <Option key={i} type="number" value={group.name}>{group.name}</Option>
+                                            )
+                                        )}
+                                    </Select>
+                                )}
+                            </FormItem>
+                        
+                        </Col>
+                        {this.standartField(fields.industry, 16)}
+                        {this.standartField(fields.company, 18)}
+                        {this.standartField(fields.position, 18)}
+                        <Col xs={24} sm={24} md={24} lg={12}>
+                            <FormItem
+                                {...{ labelCol: { sm: 6, md: 6, lg: 8 }, wrapperCol: { sm: 18, md: 18, lg: 16 } }}
+                                label="Дата Рождения"
+                            >
+                                {getFieldDecorator('birth_date', {
+                                    rules: [{ type: 'object', message: 'Дата рождения!' }],
+                                    initialValue: currentContactData ? moment(currentContactData.birth_date, dateFormat) : moment('01-27-68', dateFormat)
+                                })(
+                                    <DatePicker format={dateFormat} />
+                                )}
+                            </FormItem>
 
-                    </Col>
-                    {this.standartField(fields.city, 20)}
-                </Row>
+                        </Col>
+                        {this.standartField(fields.city, 20)}
+                    </Row>
+                    
+                        {/* <FormItem
+                        style={{display: 'flex', justifyContent: 'flex-end'}}
+                        >   
+                            <Button style={{marginRight: '10px'}} onClick={()=>this.props.closeModal()}>Отмена</Button>
+                            <Button type="primary" htmlType="submit">Сохранить</Button>
+                        </FormItem> */}
                 
-                    {/* <FormItem
-                     style={{display: 'flex', justifyContent: 'flex-end'}}
-                    >   
-                        <Button style={{marginRight: '10px'}} onClick={()=>this.props.closeModal()}>Отмена</Button>
-                        <Button type="primary" htmlType="submit">Сохранить</Button>
-                    </FormItem> */}
-            
-            </Form>
-        );
+                </Form>
+            );
+        }else{
+            return(
+                <p>Загрузка...</p>
+            )
+        }
     }
 }
 

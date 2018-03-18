@@ -1,26 +1,37 @@
 import React, { Component } from 'react';
-import { Upload, message, Button, Icon, Progress } from 'antd';
+import { Upload, message, Button, Icon, Progress, List } from 'antd';
 
+import File from './FileItem'
+
+const API = 'https://simplecrmonline.cloud/api'
 const props = {
   name: 'file',
-  action: '//jsonplaceholder.typicode.com/posts/',
   headers: {
     authorization: 'authorization-text',
   },
   
 };
+function getBase64(file, callback) {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(file);
+}
 
 class Files extends Component{
   state = {
-      application: [],
+      contact_application: [],
       applicationUploadPercent: 0,
-      esse: [],
+      contact_esse: [],
       esseUploadPercent: 0,
-      files: []
+      fileUploadPercent: 0,
+      files: [],
+      checked: false
   }
   componentWillMount = () => {
-        const { currentContactData } = this.props;
+        const { currentContactData, auth, id, fetchFiles } = this.props;
 
+        fetchFiles(auth.token, id);
+        
         if(currentContactData){
             if(currentContactData.application){
                 this.setState({application: [currentContactData.application],applicationUploadPercent: 100})
@@ -33,6 +44,35 @@ class Files extends Component{
             }
         }
   }
+  componentWillReceiveProps = (nextProps)=>{
+    const { auth, id, fetchFiles } = this.props;
+
+    if(nextProps.files !== this.state.files){
+        this.setState({files: nextProps.files})
+    }
+    if(nextProps.uploaded && nextProps.uploaded !== this.props.uploaded){
+        fetchFiles(auth.token, id);
+    }
+  }
+  shouldComponentUpdate =(nextProps, nextState)=>{
+     if(nextState!== this.state ){
+         return true
+     }
+
+    if(nextProps.file !== this.props.file){
+            return true
+    }
+
+    if(nextProps.files !== this.props.files){
+            return true
+    }
+
+    if(nextProps.uploaded !== this.props.uploaded){
+            return true
+    }
+
+    return false
+  }
 
   handleSubmit = () => {
         const { updateContactBoolean, saveContact, updateContact } = this.props
@@ -42,47 +82,53 @@ class Files extends Component{
                 message.error('Файл ещё не загружен');
             }else if (!updateContactBoolean ){
 
-                saveContact({application: application[0], esse: esse[0]})
+                saveContact()
             }else{
-                updateContact({application: application[0], esse: esse[0]})
+                updateContact()
             }
         
   }
   upload = (info, doc, percent) =>{
+    const { auth, id, uploadFile } = this.props;
 
-    if (info.file.status !== 'uploading') {
-
-      this.setState({[percent]: info.file.percent})
+    if(info.event && info.event.percent){
+        this.setState({[percent]: info.event.percent})
     }
-    if (info.file.originFileObj) {
 
-      this.setState({[doc]: [info.file.originFileObj]})
+    if (info.event && info.event.percent === 100){
+        this.normFile(info, doc)       
     }
   }
+  normFile = (e, doc) => {
+        const { auth, id, uploadFile } = this.props;
+        if (e.file.originFileObj){
+            //this.setState({[doc]: [e.fileList]})
+            uploadFile(e.file.originFileObj, e.file.originFileObj.name, doc, auth.token, id)
+        }
+    }
+  uploadFile = (doc, percent, name) => {
 
-  uploadFile = (doc, percent, name) => (
-    <div>
-            <Upload {...props} 
-                    onChange={(info) => this.upload(info, doc, percent)} 
-                    fileList={this.state[doc]}
-                    onRemove={()=> this.setState({[doc]: [], [percent]: 0})}
-                    style={{width:'75%'}}>
-                <Button style={{width:'100%'}}>
-                    <Icon type="upload" />{name}
-                </Button>
-                <Progress style={{width:'100%'}}
-                          percent={Math.ceil(this.state[percent])} />
-            </Upload>
-     </div>
-  )
+    return (
+            <div>
+                <Upload name= 'file'
+                        onChange={(info) => this.upload(info, doc, percent)}
+                        showUploadList ={false}
+                        // onRemove={()=> this.setState({[doc]: [], [percent]: 0})}
+                        style={{width:'75%'}}>
+                    <Button style={{width:'100%'}}>
+                        <Icon type="upload" />{name}
+                    </Button>
+                    <Progress style={{width:'100%'}}
+                            percent={Math.ceil(this.state[percent])} />
+                </Upload>
+            </div>
+    )
+  }
   uploadFiles = (info) => {
-      if (info.file.status !== 'uploading') {
-
-      }
-      if (info.file.originFileObj) {
-           this.setState({files: info.fileList })
-      }
+      
+      this.upload(info, null, 'fileUploadPercent')
   }
+  
   componentWillUnmount=()=>{
             const { handleCurrentContactData } = this.props;
             const { application, esse, files, applicationUploadPercent, esseUploadPercent } = this.state;
@@ -90,33 +136,47 @@ class Files extends Component{
                 message.error('Файл не был загружен до конца.');
                 this.setState({esseUploadPercent: 0, applicationUploadPercent: 0})
             }else{
-                handleCurrentContactData({application: application[0], esse: esse[0], files})
+                //handleCurrentContactData({application: application[0], esse: esse[0], files})
             }
-    }
+  }
   render(){
-    const { applicationUploadPercent, application } = this.state;
+    const { applicationUploadPercent, application, files } = this.state;
+    const { deleteFile, auth, id, fetchFile } = this.props;
     return(
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around'}}>
             <div className="list" style={{width: '250px', justifyContent: 'space-around'}}>
                 <div>
-                    {this.uploadFile('application', 'applicationUploadPercent', 'Форма заявки')}
+                    {this.uploadFile('contact_application', 'applicationUploadPercent', 'Форма заявки')}
                 </div>
                 <div>
-                    {this.uploadFile('esse', 'esseUploadPercent', 'Эссе')}
+                    {this.uploadFile('contact_esse', 'esseUploadPercent', 'Эссе')}
                 </div>
             </div>
             <div style={{width: '380px'}}>
                 <p style={{marginBottom: '10px', textAlign: 'center'}}>Файлы контакта</p>
                 <div className="listBox" style={{marginBottom: '10px'}}>
-                    <Upload {...props} 
+                    <Upload  
                             onChange={(info) => this.uploadFiles(info)}
-                            fileList={this.state.files}
-                            style={{width:'75%'}}>
+                            style={{width:'75%'}}
+                            showUploadList ={false }>
                         <Button style={{width:'100%'}}>
                             <Icon type="upload" /> Добавить файл
                         </Button>
-                        
+                        <Progress style={{width:'100%'}}
+                          percent={Math.ceil(this.state.fileUploadPercent)} />
                     </Upload>
+                    <div className="list">
+                            <List
+                                itemLayout="vertical"
+                                dataSource={files}
+                                renderItem={file => (
+                                    <List.Item>
+                                        {/* <Note item={item} handleCheckChange={this.handleCheckChange}/> */}
+                                        <File item={{ name: file }} file={this.props.file} deleteFile={deleteFile} fetchFile={fetchFile} auth={auth} id={id}/>
+                                    </List.Item>
+                                )}
+                            />
+                    </div>
                 </div>
             </div>
         </div>

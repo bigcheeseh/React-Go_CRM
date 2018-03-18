@@ -38,6 +38,20 @@ import axios from 'axios';
 const API = 'https://simplecrmonline.cloud/api'
 
 export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dispatch) => {
+    console.log(sorted, 'sorted')
+    let group_id;
+    if (filtred && filtred.group_id){
+
+        group_id = filtred.group_id.map(group=>{
+
+            if(typeof group === 'object'){
+                return group.id
+            }
+
+            return group
+        })
+    }
+
 
     axios(
             {
@@ -47,14 +61,14 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
                 params:{
                     row_count,
                     offset,
-                    sort:      sorted.length > 0 ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
-                    any_field: filtred && filtred.any_field ? filtred.any_field : null,
-                    name:      filtred && filtred.name      ? filtred.name : null,
-                    //group_name: filtred && filtred.group_name ? filtred.group_name : null,
-                    industry:  filtred && filtred.industry  ? filtred.industry : null,
-                    company:   filtred && filtred.company   ? filtred.company : null,
-                    position:  filtred && filtred.position  ? filtred.position : null,
-                    city:      filtred && filtred.city      ? filtred.city : null,
+                    sort:      sorted.length > 0 && sorted[0].id !== "group_name" ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
+                    any_field: filtred && filtred.any_field   ? filtred.any_field : null,
+                    name:      filtred && filtred.name        ? filtred.name : null,
+                    group_id:  filtred && group_id            ? group_id.join(',') : null,
+                    industry:  filtred && filtred.industry    ? filtred.industry : null,
+                    company:   filtred && filtred.company     ? filtred.company : null,
+                    position:  filtred && filtred.position    ? filtred.position : null,
+                    city:      filtred && filtred.city        ? filtred.city : null,
                 }
             }
         )
@@ -70,7 +84,7 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
 }
 
 export const importContacts = (file, token) => (dispatch) => {
-    console.log(file)
+
     let fileFormData = new FormData();
     fileFormData.append('файл', file)
 
@@ -86,7 +100,6 @@ export const importContacts = (file, token) => (dispatch) => {
     )
         .then((response) => {
 
-            console.log(response)
 
             dispatch({ type: IMPORT_CONTACTS, payload: response.data })
         })
@@ -98,30 +111,47 @@ export const importContacts = (file, token) => (dispatch) => {
 }
 
 
-export const exportContacts = (token, row_count, offset, sorted, filtred) => (dispatch) => {
-    console.log(token, row_count, offset, sorted, filtred)
+export const exportContacts = (token, sorted, filtred) => (dispatch) => {
+    let group_id;
+    if (filtred && filtred.group_id){
+
+        group_id = filtred.group_id.map(group=>{
+
+            if(typeof group === 'object'){
+                return group.id
+            }
+
+            return group
+        })
+    }
     axios(
             {
                 method: 'get',
                 url: `${API}/export`,
                 headers: { 'X-CSRF-Token': token },
+                responseType: 'arraybuffer',
                 params: {
-                    row_count,
-                    offset,
-                //     sort:       sorted  && sorted.length > 0 ? `${sorted[0].id} ${sorted[0].desc ? "desc" : "asc"}` : null,
-                //     any_field:  filtred && filtred.any_field ? filtred.any_field : null,
-                //     name:       filtred && filtred.name      ? filtred.name : null,
-                //     //group_name: filtred && filtred.group_name ? filtred.group_name : null,
-                //     industry:   filtred && filtred.industry  ? filtred.industry : null,
-                //     company:    filtred && filtred.company   ? filtred.company : null,
-                //     position:   filtred && filtred.position  ? filtred.position : null,
-                //     city:       filtred && filtred.city      ? filtred.city : null,
+
+                    sort:       sorted  && sorted.length > 0 && sorted[0].id !== "group_name" ? `${sorted[0].id} ${sorted[0].desc ? "desc" : "asc"}` : null,
+                    any_field:  filtred && filtred.any_field ? filtred.any_field : null,
+                    name:       filtred && filtred.name      ? filtred.name : null,
+                    group_id:   filtred && group_id          ? group_id.join(',') : null,
+                    industry:   filtred && filtred.industry  ? filtred.industry : null,
+                    company:    filtred && filtred.company   ? filtred.company : null,
+                    position:   filtred && filtred.position  ? filtred.position : null,
+                    city:       filtred && filtred.city      ? filtred.city : null,
                 }
             }
         )
         .then((response) => {
+           
+                const arrayBufferView = new Uint8Array(response.data);
+                const blob = new Blob([arrayBufferView], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+                const urlCreator = window.URL || window.webkitURL
 
-            dispatch({ type: EXPORT_CONTACTS, payload: response.data })
+
+
+            dispatch({ type: EXPORT_CONTACTS, payload: urlCreator.createObjectURL(blob) })
         })
         .catch((error) => {
 
@@ -142,7 +172,6 @@ export const fetchContact = (token, id) => (dispatch) => {
         )
         .then((response) => {
 
-            console.log(response)
 
             dispatch({ type: FETCH_CONTACT, payload: response.data })
         })
@@ -193,7 +222,6 @@ export const commonSearch = ( field ) => (dispatch) => {
 
 export const updateContact = (contact, token, id) => (dispatch) => {
 
-    console.log(id, 'id', contact, token)
     contact = { ...contact,  photo: '',application: '', esse: '', notes: [], links: [] }
     axios(
             {
@@ -225,7 +253,7 @@ export const deleteContact = (token, id) => (dispatch) => {
             }
         )
         .then((response) => {
-            console.log(response)
+           
             dispatch({ type: DELETE_CONTACT, payload: response.data })
         })
         .catch((error) => {
@@ -244,18 +272,20 @@ export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) =>
         fileFormData.append('field', fileType)
     }
 
-    axios(
-        {
-            method: 'post',
-            url: `${API}/contacts/${id}/files`,
-            data:fileFormData,
-            headers: {
-                'X-CSRF-Token': token, 'Content-Type': 'multipart/form-data' 
-            }
-        }
-    )
-        .then((response) => {
+    dispatch({ type: 'UPLOAD_FILE_LOADING' })
 
+    axios(
+            {
+                method: 'post',
+                url: `${API}/contacts/${id}/files`,
+                data:fileFormData,
+                headers: {
+                    'X-CSRF-Token': token, 'Content-Type': 'multipart/form-data' 
+                }
+            }
+        )
+        .then((response) => {
+           
             dispatch({ type: UPLOAD_FILE })
         })
         .catch((error) => {
@@ -265,12 +295,70 @@ export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) =>
 
 }
 
+export const fetchFiles = (token, id) => (dispatch) => {
+
+        axios(
+                {
+                    method: 'get',
+                    url: `${API}/contacts/${id}/files`,
+                    headers: {
+                        'X-CSRF-Token': token
+                    }
+                }
+            )
+            .then((response) => {
+
+                console.log(response.data)
+
+                dispatch({ type: `FETCH_FILES`, payload:response.data.files})
+  
+                
+            })
+            .catch((error) => {
+
+                dispatch({ type: 'FETCH_FILES_ERROR', payload: error })
+            })
+    
+
+}
+
 export const fetchFile = (fileName, fileType, token, id) => (dispatch) => {
 
+        axios(
+                {
+                    method: 'get',
+                    url: `${API}/contacts/${id}/files/${fileName}`,
+                    headers: {
+                        'X-CSRF-Token': token
+                    },
+                    responseType: 'arraybuffer'
+                }
+            )
+            .then((response) => {
+
+                
+
+                const arrayBufferView = new Uint8Array(response.data);
+                const blob = new Blob([arrayBufferView])
+                const urlCreator = window.URL || window.webkitURL
+                dispatch({ type: `FETCH_${fileType}`, payload:{url: urlCreator.createObjectURL(blob), id, name: fileName}})
+             
+                
+            })
+            .catch((error) => {
+
+                dispatch({ type: 'FETCH_FILE_ERROR', payload: error })
+            })
     
+
+}
+
+export const deleteFile = (fileName, token, id) => (dispatch) => {
+
+
     axios(
             {
-                method: 'get',
+                method: 'delete',
                 url: `${API}/contacts/${id}/files/${fileName}`,
                 headers: {
                     'X-CSRF-Token': token
@@ -279,40 +367,19 @@ export const fetchFile = (fileName, fileType, token, id) => (dispatch) => {
         )
         .then((response) => {
 
-            console.log(response)
-            // var imageBase64 = btoa(response.data)
-            dispatch({ type: `FETCH_${fileType}`, payload: response.data})
-            
+            dispatch({ type: `DELETE_FILE` })
         })
         .catch((error) => {
 
-            dispatch({ type: 'FETCH_FILE_ERROR', payload: error })
+            dispatch({ type: 'DELETE_FILE_ERROR', payload: error })
         })
 
 }
 
-export const deleteFile = (fileName, fileType, token, id) => (dispatch) => {
+export const clearFile = (fileType) => (dispatch) => {
 
-
-    axios(
-        {
-            method: 'delete',
-            url: `${API}/contacts/${id}/files/${fileName}`,
-            headers: {
-                'X-CSRF-Token': token
-            }
-        }
-    )
-        .then((response) => {
-
-
-            dispatch({ type: `DELETE_${fileType}`, payload: response.data })
-        })
-        .catch((error) => {
-
-            dispatch({ type: 'FETCH_FILE_ERROR', payload: error })
-        })
-
+    dispatch({ type: `CLEAR_${fileType}`})
+      
 }
 
 
@@ -363,7 +430,7 @@ export const addNote = (note, token, id) => (dispatch) =>{
         })
 } 
 export const deleteNote = (token, id, noteId) => (dispatch) =>{
-    console.log(token, id, noteId)
+    
     axios(
             {
                 method:'delete',
@@ -381,7 +448,7 @@ export const deleteNote = (token, id, noteId) => (dispatch) =>{
         })
 }
 export const addLink = (link, token, id) => (dispatch) =>{
-    console.log(link, token, id)
+   
     axios(
             {
                 method:'post',

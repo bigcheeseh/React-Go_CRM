@@ -1,48 +1,88 @@
 const initialState = {
-    photo: '',
+    photo: {},
     esse: '',
     application: '',
-    files: []
+    excel: '',
+    fileList: [],
+    uploaded: false,
+    loading: false,
+    file:''
 }
 
 export default function (state = initialState, action) {
     switch (action.type) {
-
+         case 'UPLOAD_FILE_LOADING':
+            return {
+                ...state,
+                loading: true,
+        }
+        
+        case 'UPLOAD_FILE':
+            return {
+                ...state,
+                uploaded: true,
+            }
+        case 'EXPORT_CONTACTS':
+            return {
+                ...state,
+                excel: action.payload
+            }
         case 'FETCH_PHOTO':
             return {
                 ...state,
-                photo: action.payload
+                photo: { ...state.photo, [action.payload.id]: action.payload.url},
+                uploaded: false,
+                loading: false
             }
+       
         case 'FETCH_ESSE':
             return {
                 ...state,
-                esse: action.payload
+                esse: action.payload,
+                loading: false
             }
         case 'FETCH_APPLICATION':
             return {
                 ...state,
-                application: action.payload
+                application: action.payload,
+                loading: false
             }
         case 'FETCH_FILES':
             return {
                 ...state,
-                files: [...action.payload]
+                uploaded: false,
+                loading: false,
+                fileList: [...action.payload]
             }
-        case 'DELETE_PHOTO':
+        case 'FETCH_FILE':
             return {
                 ...state,
-                photo: ''
+                uploaded: false,
+                loading: false,
+                file: action.payload
             }
-        case 'DELETE_ESSE':
+        case 'DELETE_FILE':
             return {
                 ...state,
-                esse: ''
+                uploaded: true,
+                loading: false
             }
-        case 'DELETE_APPLICATION':
-            return {
-                ...state,
-                application: ''
-            }
+       
+        // case 'CLEAR_PHOTO':
+        //     return {
+        //         ...state,
+        //         photo: ''
+        //     }
+        // case 'CLEAR_ESSE':
+        //     return {
+        //         ...state,
+        //         esse: ''
+        //     }
+        // case 'CLEAR_APPLICATION':
+        //     return {
+        //         ...state,
+        //         application: ''
+        //     }
         
         
         default:

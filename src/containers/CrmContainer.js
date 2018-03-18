@@ -5,7 +5,9 @@ import {
          saveContact,
          uploadFile,
          fetchFile,
-         deleteFile, 
+         fetchFiles,
+         deleteFile,
+         clearFile, 
          updateContact, 
          fetchContacts, 
          fetchContact,
@@ -23,19 +25,26 @@ import {
          deleteLink 
         } from '../actions/index';
 
-const CrmContainer = (props) => {
-        
+class CrmContainer extends Component{
+        shouldComponentUpdate = (nextProps, nextState)=>{
+                if(nextProps !== this.props){
+                        return true
+                }
 
-        return(
-                <props.Layout {...props}/>
-        )
+                return false
+        }
+        render(){
+                const { props } = this;
+                return(
+                        <props.Layout {...props}/>
+                )
+        }
        
 }
 
 const mapStateToProps = ({contacts, auth, notes, links, files})=>{
         const { allContacts, sortedContacts, currentContact, extendedSearch, commonSearch} = contacts;
-        
-        console.log(allContacts)
+
         return {
                 contacts: sortedContacts,
                 currentContact,
@@ -48,4 +57,4 @@ const mapStateToProps = ({contacts, auth, notes, links, files})=>{
             }
 }
 
-export default connect(mapStateToProps, { uploadFile, fetchFile, deleteFile, saveContact, commonSearch, updateContact, fetchContacts, importContacts, exportContacts, sortContacts, fetchContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, addNote, addLink, deleteNote, deleteLink })(CrmContainer)
+export default connect(mapStateToProps, { uploadFile, fetchFile, fetchFiles, deleteFile, clearFile, saveContact, commonSearch, updateContact, fetchContacts, importContacts, exportContacts, sortContacts, fetchContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, addNote, addLink, deleteNote, deleteLink })(CrmContainer)

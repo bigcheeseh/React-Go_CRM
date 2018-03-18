@@ -2,10 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { sortContacts } from '../actions/index';
 
-const Sider = ({Layout, collapsed, contacts, sortContacts}) => (
+const Sider = ({Layout, collapsed, contacts, sortContacts, auth}) => (
 
-    <Layout collapsed={collapsed} sortContacts={sortContacts}/>
+    <Layout collapsed={collapsed} auth={auth} sortContacts={sortContacts}/>
 )
 
+const mapStateToProps=({auth})=>({auth})
 
-export default connect(null, { sortContacts })(Sider)
+export default connect(mapStateToProps, { sortContacts })(Sider)

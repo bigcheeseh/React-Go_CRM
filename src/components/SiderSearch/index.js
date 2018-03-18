@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { Layout, Menu, Icon, Input, Select, Button } from 'antd';
 import './sider.css'
-import { fieldsArray, fieldsObj } from '../CRM/components/CustomerForm/config/fields';
+import config from '../CRM/components/CustomerForm/config/fields';
 
 const { Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -17,40 +17,57 @@ class SiderComponent extends Component{
     }
     
     state = {
-        fieldsState: fieldsObj,
-        collapsed: false
+        fieldsState: {},
+        fieldsArray: [],
+        collapsed: false,
+        config:{}
     }
-
+    componentWillMount(){
+        
+        const { auth } = this.props;
+        
+        config(auth.token).then(res => {
+            this.setState({fieldsState: res.fieldsObj, fieldsArray: res.fieldsArray, config: res })
+        })
+    }
     handleSearch = () => {
-        //console.log(this.state.fieldsState)
+
         this.props.sortContacts(this.state.fieldsState)
 
     }
     handleClear = () => {
-        this.setState( { fieldsState: { ... fieldsObj } }, () =>  this.props.sortContacts(this.state.fieldsState) )
+        console.log(this.state.config)
+        this.setState( { fieldsState: { ...this.state.config.fieldsObj } })
+        
     }
+    
     renderFields = () => {
-        const { fieldsState } = this.state
+        const { fieldsState, fieldsArray,groupsDefaultNumbers, config } = this.state
+
+        console.log(fieldsState, 'rerenders')
         return fieldsArray.map((field, i) =>{
             if(i === 1){
-                return (
-                    <Menu.Item className="sider_select" key={i}>
-                                <div style={{marginLeft:'12px'}}>
-                                    <label>Группа</label>
-                                </div>
-                                <Select defaultValue={fieldsState[field.name]}
-                                        mode="multiple" 
-                                        onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e}})} 
-                                        name={field.name} >                                 
-                                            {field.content.map((group, i) => (
-                                                <Option ref={group} style={{display: 'block'}} key={group} value={group}>{group}</Option>
-                                                
-                                            )
-                                        )}      
-                                </Select>
-                    </Menu.Item>
-                )
-            }
+                    return (
+                            <Menu.Item className="sider_select" key={i}>
+                                        <div style={{marginLeft:'12px'}}>
+                                            <label>Группа</label>
+                                        </div>
+                                        <Select mode="multiple"
+                                                defaultValue = {config.defaultGroups}
+                                                onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e}})} 
+                                                name={field.name} >                                 
+                                                    {field.content.map((group, i) =>{
+                                                        return(
+                                                            <Option active={true} ref={group.id} style={{display: 'block'}} key={i} value={group.id}>{group.name}</Option>
+                                                            
+                                                        )
+                                                    }
+                                                )} 
+        
+                                        </Select>
+                            </Menu.Item>
+                        )
+                }
             return (
                 <Menu.Item key={i}><input value={fieldsState[field.name]} 
                                           className="menu-search" 
@@ -59,6 +76,7 @@ class SiderComponent extends Component{
                                           onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e.target.value } })}/>
                 </Menu.Item>
             )
+           
         }) 
     }
     componentWillReceiveProps = (nextProps) => {
@@ -67,7 +85,7 @@ class SiderComponent extends Component{
     componentDidMount = () => {
         this.setState({collapsed: this.props.collapsed})
     }
-    
+
     render(){
         
         return(

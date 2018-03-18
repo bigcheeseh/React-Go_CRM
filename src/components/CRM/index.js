@@ -36,7 +36,9 @@ class CRM extends Component{
             commonSearchValue: PropTypes.object.isRequired,
             uploadFile: PropTypes.func.isRequired,
             fetchFile: PropTypes.func.isRequired,
+            fetchFiles: PropTypes.func.isRequired,
             deleteFile: PropTypes.func.isRequired,
+            clearFile: PropTypes.func.isRequired,
             setNotes: PropTypes.func.isRequired,
             setLinks: PropTypes.func.isRequired,
             clearNotes: PropTypes.func.isRequired,
@@ -51,7 +53,8 @@ class CRM extends Component{
         modalIsOpen: false,
         collapsed: false,
         updateContactBoolean : false,
-        currentContactData: null
+        currentContactData: null,
+        exportTable: false,
     };
     toggle = () => {
         this.setState({
@@ -82,13 +85,26 @@ class CRM extends Component{
         
     }
     componentWillReceiveProps = (nextProps) => {
-        const { auth, history } = nextProps;
+        const { auth, history, files } = nextProps;
 
         // if (!auth.login) {
         //     history.push('/auth')
         // }
 
+        if(files.excel !== this.props.files.excel){
+
+            this.downloadLink.href = files.excel
+            this.downloadLink.click()
+        }
     
+    }
+
+    handleExportContacts = ()=>{
+        // const { auth, commonSearchValue, extendedSearchValue}
+
+        // exportContacts(auth.token, 50, 0)
+
+        this.setState({exportTable: !this.state.exportTable})
     }
 
     handleImportContacts = (upload)=> {
@@ -98,8 +114,8 @@ class CRM extends Component{
         }
     }
     render(){
-        const { extendedSearchValue, commonSearchValue, commonSearch, uploadFile, fetchFile, deleteFile, files, title, saveContact, updateContact, contacts, fetchContacts, sortContacts, fetchContact, importContacts, exportContacts, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
-        const { currentContactData, updateContactBoolean } = this.state;
+        const { extendedSearchValue, commonSearchValue, commonSearch, uploadFile, fetchFile, fetchFiles, deleteFile, clearFile, files, title, saveContact, updateContact, contacts, fetchContacts, sortContacts, fetchContact, importContacts, exportContacts, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
+        const { currentContactData, updateContactBoolean, exportTable } = this.state;
 
         return(                  
                         <div>
@@ -119,6 +135,7 @@ class CRM extends Component{
                                 </Col>
                                 <Col lg={4} md={8} sm={24} xs={24} style={{ marginBottom: '20px' }}>
                                     <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                                        <a ref={(a)=>this.downloadLink = a} download = "data.xlsx"/>
                                         <Upload
                                                 showUploadList={false}
                                                 name = 'file'
@@ -127,14 +144,16 @@ class CRM extends Component{
                                                 <Button type="primary" shape="circle" icon="download" />
                                             </Tooltip> 
                                         </Upload>
-                                        <Button type="primary" shape="circle" icon="tablet" onClick={()=> exportContacts(auth.token, 50, 0)}/>
+                                        <Tooltip title="экспорт контактов по заданным критериям поиска">
+                                             <Button type="primary" shape="circle" icon="tablet" onClick={this.handleExportContacts}/>
+                                        </Tooltip>
                                         <Tooltip title="добавить контакт"> 
                                             <Button type="primary" shape="circle" icon="plus" onClick={this.openModal} />
                                         </Tooltip>
                                     </div>
                                 </Col>
                             </Row>
-                            <CustomersTable auth={auth} extendedSearchValue={extendedSearchValue} commonSearchValue={commonSearchValue} fetchContacts={fetchContacts} contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
+                            <CustomersTable exportTable={exportTable} handleExportContacts={this.handleExportContacts} exportContacts={exportContacts} fetchFile={fetchFile} files={files} auth={auth} extendedSearchValue={extendedSearchValue} commonSearchValue={commonSearchValue} fetchContacts={fetchContacts} contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
                             <Modal
                                 isOpen={this.state.modalIsOpen}
                                 onAfterOpen={this.afterOpenModal}
@@ -149,7 +168,9 @@ class CRM extends Component{
                                               auth={auth}
                                               uploadFile={uploadFile}
                                               fetchFile={fetchFile}
+                                              fetchFiles={fetchFiles}
                                               deleteFile={deleteFile}
+                                              clearFile={clearFile}
                                               files={files}
                                               fetchContact={fetchContact} 
                                               saveContact={saveContact}

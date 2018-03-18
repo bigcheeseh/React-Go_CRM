@@ -33,7 +33,23 @@ p{
     border: 1px solid #1890ff; 
     border-radius: 3px;
 }
-
+.download_item.sign{
+    color: #3d832e
+}
+.download_item.sign:hover{
+    color: #41c028;
+    font-size: 16px;
+}
+.delete_item.sign{
+    color: #991414;
+}
+.delete_item.sign:hover{
+    color: #d43e18;
+    font-size: 16px;
+}
+.sign:hover{
+    cursor: pointer;
+}
 .ant-upload{
     width: 100%
 }

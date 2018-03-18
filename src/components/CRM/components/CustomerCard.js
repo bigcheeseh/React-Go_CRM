@@ -45,9 +45,6 @@ class CustomerCard extends Component {
             this.setState({ contactId: currentContactData.id })
         }
         
-        if (currentContactData && currentContactData.photo){
-            fetchFile(currentContactData.photo, 'PHOTO', auth.token, currentContactData.id)
-        }
         this.setState({currentContactData: this.props.currentContactData})
     }
 
@@ -100,21 +97,31 @@ class CustomerCard extends Component {
         this.props.closeModal()
     }
     content = () => {
-        const { uploadFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
-        const { currentContactData, contactId, photo } = this.state
+        const { files, fetchFiles, fetchFile, uploadFile, deleteFile, clearFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
+        const { currentContactData, contactId } = this.state
 
         const cardPageProps = { id: contactId, currentContact, auth, fetchContact, clearLinks, clearNotes, notes, links, addNote, addLink, deleteNote, deleteLink, saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
         return {
             main:  <CustomerForm {...cardPageProps}
                           wrappedComponentRef={(form) => this.cardPage = form}
                           uploadFile={uploadFile}
-                          photo={photo}/>,
+                          clearFile={clearFile}
+                          fetchFile={fetchFile}
+                          photo={files.photo}
+                          uploaded={files.uploaded}
+                          loading={files.loading}/>,
             notes: <Notes {...cardPageProps}
                           name="notes"
                           closeModal={this.props.closeModal}
                           ref={(notes) => this.cardPage = notes}/>,
             files: <Files {...cardPageProps}
                           uploadFile={uploadFile}
+                          files={files.fileList}
+                          file={files.file}
+                          uploaded={files.uploaded}
+                          fetchFiles={fetchFiles}
+                          fetchFile={fetchFile}
+                          deleteFile={deleteFile}
                           name="files"
                           ref={(files) => this.cardPage = files}/>,
             links: <Links {...cardPageProps}
@@ -135,9 +142,9 @@ class CustomerCard extends Component {
             setLinks(nextProps.currentContact.links)
         }
 
-        if (nextProps.files.photo && nextProps.files.photo !== this.state.photo){
-            this.setState({ photo: nextProps.files.photo})
-        }
+        // if (nextProps.files.photo && nextProps.files.photo !== this.state.photo){
+        //     this.setState({ photo: nextProps.files.photo})
+        // }
 
         if (nextProps.currentContact && nextProps.currentContact !== this.props.currentContact) {
             this.setState({ contactId: nextProps.currentContact.id })
