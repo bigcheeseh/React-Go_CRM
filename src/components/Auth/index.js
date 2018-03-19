@@ -14,7 +14,7 @@ class Auth extends Component {
     componentWillMount = () => {
         const auth = JSON.parse(localStorage.getItem("token"))
 
-        if(auth.token){
+        if(auth && auth.token){
             this.props.checkToken(auth)
         }
     }
