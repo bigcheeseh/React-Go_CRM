@@ -40,7 +40,6 @@ class File extends Component{
 
         if(file && file.name === item.name && download){
              
-            console.log(file, 'file!!!!!')
             this.downloadLink.href = file.url
             this.downloadLink.click()
 

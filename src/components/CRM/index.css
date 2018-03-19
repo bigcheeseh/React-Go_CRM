@@ -16,6 +16,27 @@
     border: none;
 }
 
+@media only screen and (min-width: 900px){
+    .dashboard{
+        height: 16vh;
+        min-height: 115px;
+    }
+}
+
+@media only screen and (min-width: 450px) and (max-width: 900px){
+    .dashboard{
+        height: 16vh;
+        min-height: 155px;
+    }
+}
+
+@media only screen and (max-width: 450px){
+    .dashboard{
+        height: 16vh;
+        min-height: 185px;
+    }
+}
+
 
 @media only screen and (min-width: 1100px){
     .modal{

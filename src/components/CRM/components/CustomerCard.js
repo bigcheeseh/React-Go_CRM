@@ -41,7 +41,7 @@ class CustomerCard extends Component {
         const { currentContactData, fetchFile, auth } = this.props;
 
         if (currentContactData) {
-            console.log(currentContactData, 'current contact data')
+
             this.setState({ contactId: currentContactData.id })
         }
         
@@ -130,10 +130,21 @@ class CustomerCard extends Component {
                           ref={(links) => this.cardPage = links}/>,
         };
     }
+    shouldComponentUpdate = (nextProps, nextState) =>{
+        if(nextProps !== this.props){
+            return true
+        }
 
+
+        if(nextState !== this.state){
+            return true
+        }
+
+        return false
+    }
     componentWillReceiveProps = (nextProps) =>{
         const {notes, links, setNotes, setLinks } = this.props
-        console.log(this.cardPage)
+
         if(nextProps.currentContact.notes && nextProps.currentContact.notes !== this.props.currentContact.notes && this.cardPage.props.name === 'notes'){
             setNotes(nextProps.currentContact.notes)
         }
@@ -142,9 +153,6 @@ class CustomerCard extends Component {
             setLinks(nextProps.currentContact.links)
         }
 
-        // if (nextProps.files.photo && nextProps.files.photo !== this.state.photo){
-        //     this.setState({ photo: nextProps.files.photo})
-        // }
 
         if (nextProps.currentContact && nextProps.currentContact !== this.props.currentContact) {
             this.setState({ contactId: nextProps.currentContact.id })

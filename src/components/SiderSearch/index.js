@@ -36,7 +36,7 @@ class SiderComponent extends Component{
 
     }
     handleClear = () => {
-        console.log(this.state.config)
+ 
         this.setState( { fieldsState: { ...this.state.config.fieldsObj } })
         
     }
@@ -44,7 +44,6 @@ class SiderComponent extends Component{
     renderFields = () => {
         const { fieldsState, fieldsArray,groupsDefaultNumbers, config } = this.state
 
-        console.log(fieldsState, 'rerenders')
         return fieldsArray.map((field, i) =>{
             if(i === 1){
                     return (
@@ -94,14 +93,16 @@ class SiderComponent extends Component{
                 collapsible
                 collapsed={this.state.collapsed}
                 width={275}
+                style={{height:'100vh'}}
             >
                 <div className="logo" />
                 <Menu defaultOpenKeys={['sub1']}
+                      className="menu"
+                      style={{height: '92vh', overflowY: 'auto', margin: 'auto'}}
                       mode="inline"
                       theme="dark"
-                      //inlineCollapsed={false}
                       selectable={false}
-                      onOpenChange={(e) => { this.state.collapsed ? e[0] = "sub1" : null; console.log(e) }}
+                      onOpenChange={(e) => { this.state.collapsed ? e[0] = "sub1" : null } }
                      
                       >
                     <SubMenu key="sub1" 

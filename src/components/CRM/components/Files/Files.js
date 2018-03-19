@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Upload, message, Button, Icon, Progress, List } from 'antd';
+import { Upload, message, Button, Icon, Progress, List, Col, Row } from 'antd';
 
 import File from './FileItem'
 
@@ -143,16 +143,18 @@ class Files extends Component{
     const { applicationUploadPercent, application, files } = this.state;
     const { deleteFile, auth, id, fetchFile } = this.props;
     return(
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around'}}>
-            <div className="list" style={{width: '250px', justifyContent: 'space-around'}}>
-                <div>
-                    {this.uploadFile('contact_application', 'applicationUploadPercent', 'Форма заявки')}
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between'}}>
+            <Col md={9} sm={24} xs={24}>
+                <div className="list" style={{ justifyContent: 'space-around' }}>
+                    <div>
+                        {this.uploadFile('contact_application', 'applicationUploadPercent', 'Форма заявки')}
+                    </div>
+                    <div>
+                        {this.uploadFile('contact_esse', 'esseUploadPercent', 'Эссе')}
+                    </div>
                 </div>
-                <div>
-                    {this.uploadFile('contact_esse', 'esseUploadPercent', 'Эссе')}
-                </div>
-            </div>
-            <div style={{width: '380px'}}>
+            </Col>
+            <Col md={14} sm={24} xs={24}>
                 <p style={{marginBottom: '10px', textAlign: 'center'}}>Файлы контакта</p>
                 <div className="listBox" style={{marginBottom: '10px'}}>
                     <Upload  
@@ -178,7 +180,7 @@ class Files extends Component{
                             />
                     </div>
                 </div>
-            </div>
+            </Col>
         </div>
     )
   }

@@ -38,7 +38,7 @@ import axios from 'axios';
 const API = 'https://simplecrmonline.cloud/api'
 
 export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dispatch) => {
-    console.log(sorted, 'sorted')
+    
     let group_id;
     if (filtred && filtred.group_id){
 
@@ -61,7 +61,7 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
                 params:{
                     row_count,
                     offset,
-                    sort:      sorted.length > 0 && sorted[0].id !== "group_name" ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
+                    sort:      sorted.length > 0 && sorted[0].id !== 'photo' ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
                     any_field: filtred && filtred.any_field   ? filtred.any_field : null,
                     name:      filtred && filtred.name        ? filtred.name : null,
                     group_id:  filtred && group_id            ? group_id.join(',') : null,
@@ -215,8 +215,7 @@ export const sortContacts = ( fields )=>(dispatch)=>{
 export const commonSearch = ( field ) => (dispatch) => {
     const search = {}
     search.any_field = field
-    
-    console.log(field, search)
+
     dispatch({ type: COMMON_SEARCH, payload: search })
 }
 
@@ -307,8 +306,6 @@ export const fetchFiles = (token, id) => (dispatch) => {
                 }
             )
             .then((response) => {
-
-                console.log(response.data)
 
                 dispatch({ type: `FETCH_FILES`, payload:response.data.files})
   
@@ -458,7 +455,7 @@ export const addLink = (link, token, id) => (dispatch) =>{
             }
         )
         .then((response) => {
-            console.log(response.data)
+
             dispatch({ type: ADD_LINK, payload: response.data })
         })
         .catch((error) => {

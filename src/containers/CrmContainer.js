@@ -27,6 +27,7 @@ import {
 
 class CrmContainer extends Component{
         shouldComponentUpdate = (nextProps, nextState)=>{
+
                 if(nextProps !== this.props){
                         return true
                 }

@@ -13,17 +13,19 @@
    padding: 0 25px 0 20px!important;
    margin: 15px 0 !important;
 }
-
+.menu{
+  margin-top: 4.5vh !important;
+}
 .menu-search{
   background: #000c17;
   border: 0;
   outline: none;
-  border-bottom: 1px solid rgb(15, 31, 104) !important;
+  border-bottom: 1px solid rgb(5, 53, 124) !important;
   width: 100%;
   padding: 0 12px;
   color: #FAFAFA;
   height: 100%;
-  transition: border .3s linear
+  transition: border .3s linear;
 }
 
 .menu-search:focus{

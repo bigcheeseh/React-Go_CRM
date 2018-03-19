@@ -100,7 +100,17 @@ class CustomerForm extends React.Component {
             </Col>
         )
     }
+    shouldComponentUpdate = (nextProps, nextState) => {
+        if (nextProps !== this.props) {
+            return true
+        }
 
+        if (nextState !== this.state) {
+            return true
+        }
+
+        return false
+    }
     componentWillReceiveProps=(nextProps)=>{
         const { id, auth, fetchFile, currentContactData } = this.props;
 
@@ -118,13 +128,7 @@ class CustomerForm extends React.Component {
          }
     }
 
-    // handleCurrentUserImage = () => {
-    //     const { currentContactData } = this.state;
 
-    //     this.setState({ imageUrl: currentContactData.photo.url})
-        
-    //     return currentContactData.photo.url
-    // }
     componentWillMount = () => {
         const { currentContactData, auth, id, fetchFile } = this.props;
 
@@ -146,14 +150,7 @@ class CustomerForm extends React.Component {
         if(!this.props.updateContactBoolean){
             this.props.form.validateFields((err, values) => {
                 if (!err) {
-                    console.log('Received values of form: ', values);
-
-                        // if (this.state.imageUrl) {
-                        //     if (!values.photo) {
-                        //         values.photo = currentContactData.photo;
-                        //     }
-                        //     values.photo.url = this.state.imageUrl;
-                        // }
+                    //console.log('Received values of form: ', values);
 
                         values.group_id = groups.indexOf(values.group_name) + 1;
                         values.birth_date = moment(values.birth_date).format(dateFormat);

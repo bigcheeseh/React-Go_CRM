@@ -78,18 +78,31 @@ class CRM extends Component{
         Modal.setAppElement('body');
         const { auth, history, fetchContacts } = this.props;
 
-        // if(!auth.login){
-        //     history.push("/auth")
-        // }
+        if(!auth.login){
+            history.push("/auth")
+        }
 
         
+    }
+
+    shouldComponentUpdate = (nextProps, nextState) => {
+  
+        if (nextProps !== this.props) {
+            return true
+        }
+
+        if (nextState !== this.state) {
+            return true
+        }
+
+        return false
     }
     componentWillReceiveProps = (nextProps) => {
         const { auth, history, files } = nextProps;
 
-        // if (!auth.login) {
-        //     history.push('/auth')
-        // }
+        if (!auth.login) {
+            history.push('/auth')
+        }
 
         if(files.excel !== this.props.files.excel){
 
@@ -100,9 +113,7 @@ class CRM extends Component{
     }
 
     handleExportContacts = ()=>{
-        // const { auth, commonSearchValue, extendedSearchValue}
 
-        // exportContacts(auth.token, 50, 0)
 
         this.setState({exportTable: !this.state.exportTable})
     }
@@ -113,47 +124,60 @@ class CRM extends Component{
             importContacts(upload.file.originFileObj, auth.token)
         }
     }
+    
     render(){
         const { extendedSearchValue, commonSearchValue, commonSearch, uploadFile, fetchFile, fetchFiles, deleteFile, clearFile, files, title, saveContact, updateContact, contacts, fetchContacts, sortContacts, fetchContact, importContacts, exportContacts, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
         const { currentContactData, updateContactBoolean, exportTable } = this.state;
 
         return(                  
                         <div>
-                            <Row style={{ margin: '0 20px 20px 20px'}}>
-                                <Col xs={24} sm={24} md={16} >
-                                    <Search
-                                        placeholder="Поиск по всем полям"
-                                        onSearch={ value =>  commonSearch(value)}
-                                        enterButton="Найти"
-                                        style={{zIndex: 0}}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row style={{ margin: '0 20px' }} type="flex" justify="space-between">
-                                <Col lg={10} md={14} sm={24} xs={24} style={{marginBottom: '20px'}}>
-                                    <Alert message={`Всего найдено контактов: ${contacts.length}`} type="info" showIcon />
-                                </Col>
-                                <Col lg={4} md={8} sm={24} xs={24} style={{ marginBottom: '20px' }}>
-                                    <div style={{display: 'flex', justifyContent: 'space-around'}}>
-                                        <a ref={(a)=>this.downloadLink = a} download = "data.xlsx"/>
-                                        <Upload
-                                                showUploadList={false}
-                                                name = 'file'
-                                                onChange={this.handleImportContacts}>
-                                            <Tooltip title="выберите файл для импорта">
-                                                <Button type="primary" shape="circle" icon="download" />
-                                            </Tooltip> 
-                                        </Upload>
-                                        <Tooltip title="экспорт контактов по заданным критериям поиска">
-                                             <Button type="primary" shape="circle" icon="tablet" onClick={this.handleExportContacts}/>
-                                        </Tooltip>
-                                        <Tooltip title="добавить контакт"> 
-                                            <Button type="primary" shape="circle" icon="plus" onClick={this.openModal} />
-                                        </Tooltip>
-                                    </div>
-                                </Col>
-                            </Row>
-                            <CustomersTable exportTable={exportTable} handleExportContacts={this.handleExportContacts} exportContacts={exportContacts} fetchFile={fetchFile} files={files} auth={auth} extendedSearchValue={extendedSearchValue} commonSearchValue={commonSearchValue} fetchContacts={fetchContacts} contacts={contacts} openModalAndUpdate={this.openModalAndUpdate}/>
+                            <div className="dashboard">
+                                <Row style={{ margin: '0 20px 20px 20px'}}>
+                                    <Col xs={24} sm={24} md={16} >
+                                        <Search
+                                            placeholder="Поиск по всем полям"
+                                            onSearch={ value =>  commonSearch(value)}
+                                            enterButton="Найти"
+                                            style={{zIndex: 0}}
+                                        />
+                                    </Col>
+                                </Row>
+                                <Row style={{ margin: '0 20px' }} type="flex" justify="space-between">
+                                    <Col lg={10} md={14} sm={24} xs={24} style={{marginBottom: '20px'}}>
+                                        <Alert message={`Всего найдено контактов: ${contacts.length}`} type="info" showIcon />
+                                    </Col>
+                                    <Col lg={4} md={8} sm={24} xs={24} style={{ marginBottom: '20px' }}>
+                                        <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                                            <a ref={(a)=>this.downloadLink = a} download = "data.xlsx"/>
+                                            <Upload
+                                                    showUploadList={false}
+                                                    name = 'file'
+                                                    onChange={this.handleImportContacts}>
+                                                <Tooltip title="выберите файл для импорта">
+                                                    <Button type="primary" shape="circle" icon="download" />
+                                                </Tooltip> 
+                                            </Upload>
+                                            <Tooltip title="экспорт контактов по заданным критериям поиска">
+                                                <Button type="primary" shape="circle" icon="tablet" onClick={this.handleExportContacts}/>
+                                            </Tooltip>
+                                            <Tooltip title="добавить контакт"> 
+                                                <Button type="primary" shape="circle" icon="plus" onClick={this.openModal} />
+                                            </Tooltip>
+                                        </div>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <CustomersTable exportTable={exportTable} 
+                                            handleExportContacts={this.handleExportContacts} 
+                                            exportContacts={exportContacts} 
+                                            fetchFile={fetchFile} 
+                                            files={files} 
+                                            auth={auth} 
+                                            extendedSearchValue={extendedSearchValue} 
+                                            commonSearchValue={commonSearchValue} 
+                                            fetchContacts={fetchContacts} 
+                                            contacts={contacts} 
+                                            openModalAndUpdate={this.openModalAndUpdate}/>
                             <Modal
                                 isOpen={this.state.modalIsOpen}
                                 onAfterOpen={this.afterOpenModal}

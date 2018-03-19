@@ -89,8 +89,6 @@ class Links extends Component {
         );
     componentWillReceiveProps = (nextProps) => {
 
-        console.log(nextProps.links)
-
         if (nextProps.links && nextProps.links !== this.state.links) {
             this.setState({ links: nextProps.links })
         }

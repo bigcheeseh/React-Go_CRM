@@ -43,7 +43,7 @@ class Index extends Component{
                                         <Sider Layout={SiderSearch} collapsed={collapsed} />
                                             <Layout style={{ height: '100vh' }}>
                                                 <Header Layout={HeaderComponent} toggle={this.toggle} collapsed={collapsed} />
-                                                <Content style={{ height: '100%', padding: '2% 0 0 0' }}>
+                                                <Content style={{ height: '100%', padding: '2vh 0 0 0' }}>
                                                     <CrmContainer {...props} Layout={CrmComponent} />
                                                 </Content>
                                             </Layout>
