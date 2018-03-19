@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { message } from 'antd'
 import { 
          commonSearch, 
          saveContact,
@@ -34,6 +35,14 @@ class CrmContainer extends Component{
 
                 return false
         }
+
+        componentWillReceiveProps = (nextProps) =>{
+                if(nextProps.error && nextProps.error !== this.props.error){
+                        if(typeof nextProps.error === 'string'){
+                                message.error(nextProps.error, 4)
+                        }
+                }
+        }
         render(){
                 const { props } = this;
                 return(
@@ -43,7 +52,7 @@ class CrmContainer extends Component{
        
 }
 
-const mapStateToProps = ({contacts, auth, notes, links, files})=>{
+const mapStateToProps = ({contacts, auth, notes, links, files, error, count})=>{
         const { allContacts, sortedContacts, currentContact, extendedSearch, commonSearch} = contacts;
 
         return {
@@ -54,7 +63,9 @@ const mapStateToProps = ({contacts, auth, notes, links, files})=>{
                 auth,
                 notes,
                 links,
-                files
+                files,
+                error,
+                contactCount: count
             }
 }
 

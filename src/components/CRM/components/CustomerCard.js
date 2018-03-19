@@ -98,7 +98,7 @@ class CustomerCard extends Component {
     }
     content = () => {
         const { files, fetchFiles, fetchFile, uploadFile, deleteFile, clearFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
-        const { currentContactData, contactId } = this.state
+        const { currentContactData, contactId, contact } = this.state
 
         const cardPageProps = { id: contactId, currentContact, auth, fetchContact, clearLinks, clearNotes, notes, links, addNote, addLink, deleteNote, deleteLink, saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
         return {

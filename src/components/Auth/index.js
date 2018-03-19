@@ -10,6 +10,14 @@ class Auth extends Component {
     state = {
         error: false
     }
+
+    componentWillMount = () => {
+        const auth = JSON.parse(localStorage.getItem("token"))
+
+        if(auth.token){
+            this.props.checkToken(auth)
+        }
+    }
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -22,10 +30,9 @@ class Auth extends Component {
         });
     }
     shouldComponentUpdate(nextProps, nextState){
-
+        
         if(nextProps.auth !== this.props.auth){
 
-            nextState.error && nextProps.auth.error ? message.error('пользователь с таким именем и паролем не найден') : null
 
             return true
         }
@@ -37,6 +44,13 @@ class Auth extends Component {
     }
     componentWillReceiveProps = (nextProps) =>{
         const { auth, history } = nextProps;
+
+        if (nextProps.error && nextProps.error !== this.props.error) {
+
+            if (typeof nextProps.error === 'string') {
+                message.error(nextProps.error, 4)
+            }
+        }
 
         if(auth.login){
             history.push('/')

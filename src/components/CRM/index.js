@@ -18,6 +18,7 @@ class CRM extends Component{
     }
     static propTypes = {
             contacts: PropTypes.array.isRequired,
+            contactCount: PropTypes.number.isRequired,
             notes: PropTypes.array.isRequired,
             links: PropTypes.array.isRequired,
             files: PropTypes.object.isRequired,
@@ -144,7 +145,7 @@ class CRM extends Component{
                                 </Row>
                                 <Row style={{ margin: '0 20px' }} type="flex" justify="space-between">
                                     <Col lg={10} md={14} sm={24} xs={24} style={{marginBottom: '20px'}}>
-                                        <Alert message={`Всего найдено контактов: ${contacts.length}`} type="info" showIcon />
+                                        <Alert message={`Всего найдено контактов: ${this.props.contactCount}`} type="info" showIcon />
                                     </Col>
                                     <Col lg={4} md={8} sm={24} xs={24} style={{ marginBottom: '20px' }}>
                                         <div style={{display: 'flex', justifyContent: 'space-around'}}>

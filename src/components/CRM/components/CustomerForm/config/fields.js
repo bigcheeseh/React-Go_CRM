@@ -12,7 +12,7 @@ const config = async(token) => {
 
         const res = await axios.get(`${API}/groups`, { headers: {'X-CSRF-Token': token} })
         const groups = res.data.groups; 
-        const defaultGroups = groups.map((field, i)=>i+1)
+        const defaultGroups = []
         fields = {
             name: { name: "name", initialState: '', label: "ФИО", placeholder: "Введите ФИО", type: "text", size: 20, smallWindowSize: 20},
             group_id: {name: 'group_id', initialState: groups, content: groups},

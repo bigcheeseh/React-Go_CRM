@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Layout, Menu, Icon, Input, Select, Button } from 'antd';
+import { Layout, Menu, Icon, Input, Select, Button, message } from 'antd';
 import './sider.css'
 import config from '../CRM/components/CustomerForm/config/fields';
 
@@ -40,12 +40,21 @@ class SiderComponent extends Component{
         this.setState( { fieldsState: { ...this.state.config.fieldsObj } })
         
     }
+    componentWillReceiveProps = (nextProps) => {
+    
+        if (nextProps.error && nextProps.error !== this.props.error) {
+
+            if (typeof nextProps.error === 'string') {
+                message.error(nextProps.error, 4)
+            }
+        }
+    }
     
     renderFields = () => {
         const { fieldsState, fieldsArray,groupsDefaultNumbers, config } = this.state
 
         return fieldsArray.map((field, i) =>{
-            if(i === 1){
+            if (field.name === 'group_id'){
                     return (
                             <Menu.Item className="sider_select" key={i}>
                                         <div style={{marginLeft:'12px'}}>
@@ -66,15 +75,16 @@ class SiderComponent extends Component{
                                         </Select>
                             </Menu.Item>
                         )
-                }
-            return (
-                <Menu.Item key={i}><input value={fieldsState[field.name]} 
-                                          className="menu-search" 
-                                          placeholder={field.label} 
-                                          name={field.name}
-                                          onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e.target.value } })}/>
-                </Menu.Item>
-            )
+            } else if (field.name !== 'phone' && field.name !== 'email'){
+                return (
+                    <Menu.Item key={i}><input value={fieldsState[field.name]} 
+                                            className="menu-search" 
+                                            placeholder={field.label} 
+                                            name={field.name}
+                                            onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e.target.value } })}/>
+                    </Menu.Item>
+                )
+            }
            
         }) 
     }

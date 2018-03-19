@@ -114,7 +114,7 @@ class CustomerForm extends React.Component {
     componentWillReceiveProps=(nextProps)=>{
         const { id, auth, fetchFile, currentContactData } = this.props;
 
-        if(nextProps.photo){
+        if (nextProps.photo && nextProps.photo[id]){
  
             this.setState({ imageUrl: nextProps.photo[id] })    
         }

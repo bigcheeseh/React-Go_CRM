@@ -135,8 +135,6 @@ class Files extends Component{
             if(applicationUploadPercent > 0 && applicationUploadPercent < 100 || esseUploadPercent > 0 && esseUploadPercent < 100){
                 message.error('Файл не был загружен до конца.');
                 this.setState({esseUploadPercent: 0, applicationUploadPercent: 0})
-            }else{
-                //handleCurrentContactData({application: application[0], esse: esse[0], files})
             }
   }
   render(){

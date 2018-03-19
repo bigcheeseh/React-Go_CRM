@@ -16,20 +16,10 @@ import{
         CLEAR_LINKS,
         UPDATE_CONTACT, 
         LOGIN, LOGOUT, 
-        FETCH_CONTACTS_ERROR,
-        FETCH_CONTACT_ERROR,
-        EXPORT_CONTACTS_ERROR,
-        IMPORT_CONTACTS_ERROR, 
-        SAVE_CONTACT_ERROR, 
-        UPDATE_CONTACT_ERROR, 
-        DELETE_CONTACT_ERROR,
-        UPLOAD_FILE_ERROR,
-        ADD_LINK_ERROR,
-        ADD_NOTE_ERROR,
         DELETE_NOTE,
         DELETE_LINK,
-        DELETE_LINK_ERROR,
-        DELETE_NOTE_ERROR
+        ERROR
+
     } from './types.js';
 
 
@@ -38,7 +28,7 @@ import axios from 'axios';
 const API = 'https://simplecrmonline.cloud/api'
 
 export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dispatch) => {
-    
+
     let group_id;
     if (filtred && filtred.group_id){
 
@@ -74,11 +64,14 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
         )
         .then((response) => {
 
+            dispatch({ type: 'COUNT', payload: response.data.count })
             dispatch({ type: FETCH_CONTACTS, payload: response.data.contacts })
         })
         .catch((error) => {
 
-            dispatch({ type: FETCH_CONTACTS_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -105,7 +98,9 @@ export const importContacts = (file, token) => (dispatch) => {
         })
         .catch((error) => {
 
-            dispatch({ type: IMPORT_CONTACTS_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -155,7 +150,9 @@ export const exportContacts = (token, sorted, filtred) => (dispatch) => {
         })
         .catch((error) => {
 
-            dispatch({ type: EXPORT_CONTACTS_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -177,7 +174,9 @@ export const fetchContact = (token, id) => (dispatch) => {
         })
         .catch((error) => {
 
-            dispatch({ type: FETCH_CONTACT_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -201,7 +200,9 @@ export const saveContact = (contact, token)=>(dispatch)=>{
         })
         .catch((error) => {
 
-            dispatch({ type: SAVE_CONTACT_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 
@@ -236,7 +237,9 @@ export const updateContact = (contact, token, id) => (dispatch) => {
         })
         .catch((error) => {
 
-            dispatch({ type: UPDATE_CONTACT_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -257,7 +260,9 @@ export const deleteContact = (token, id) => (dispatch) => {
         })
         .catch((error) => {
 
-            dispatch({ type: DELETE_CONTACT_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -289,7 +294,9 @@ export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) =>
         })
         .catch((error) => {
 
-            dispatch({ type: UPLOAD_FILE_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -313,7 +320,9 @@ export const fetchFiles = (token, id) => (dispatch) => {
             })
             .catch((error) => {
 
-                dispatch({ type: 'FETCH_FILES_ERROR', payload: error })
+                if (error.response && error.response.data) {
+                    dispatch({ type: 'ERROR', payload: error.response.data })
+                }
             })
     
 
@@ -344,7 +353,9 @@ export const fetchFile = (fileName, fileType, token, id) => (dispatch) => {
             })
             .catch((error) => {
 
-                dispatch({ type: 'FETCH_FILE_ERROR', payload: error })
+                if (error.response && error.response.data){
+                    dispatch({ type: 'ERROR', payload: error.response.data })
+                }
             })
     
 
@@ -367,8 +378,10 @@ export const deleteFile = (fileName, token, id) => (dispatch) => {
             dispatch({ type: `DELETE_FILE` })
         })
         .catch((error) => {
-
-            dispatch({ type: 'DELETE_FILE_ERROR', payload: error })
+            
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 
 }
@@ -423,7 +436,9 @@ export const addNote = (note, token, id) => (dispatch) =>{
         })
         .catch((error) => {
 
-            dispatch({ type: ADD_NOTE_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 } 
 export const deleteNote = (token, id, noteId) => (dispatch) =>{
@@ -441,7 +456,9 @@ export const deleteNote = (token, id, noteId) => (dispatch) =>{
         })
         .catch((error) => {
 
-            dispatch({ type: DELETE_NOTE_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 }
 export const addLink = (link, token, id) => (dispatch) =>{
@@ -459,7 +476,9 @@ export const addLink = (link, token, id) => (dispatch) =>{
             dispatch({ type: ADD_LINK, payload: response.data })
         })
         .catch((error) => {
-            dispatch({ type: ADD_LINK_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 }
 export const deleteLink = (token, id, linkId) => (dispatch) =>{
@@ -476,7 +495,9 @@ export const deleteLink = (token, id, linkId) => (dispatch) =>{
         })
         .catch((error) => {
 
-            dispatch({ type: DELETE_LINK_ERROR, payload: error })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 }
 
@@ -494,15 +515,44 @@ export const login = (values) =>(dispatch)=>{
         )
         .then((response)=>{
 
+            localStorage.setItem('token', JSON.stringify({token: response.data.token, name: values.name}))
+
             dispatch({ type: LOGIN, payload: {login: true, token: response.data.token, name: values.name, error: false } })
         })
         .catch((error)=>{
 
-            dispatch({ type: LOGIN, payload: { login: false, error} })
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
+        })
+}
+
+export const checkToken = (auth) => (dispatch) => {
+
+    axios(
+            {
+                method: 'get',
+                url: `${API}/token`,
+                headers: { 'X-CSRF-Token': auth.token }
+            }
+        )
+        .then((response) => {
+
+            if(response.status === 200){
+                dispatch({ type: LOGIN, payload: { login: true, token: auth.token, name: auth.name, error: false } })
+            }
+        })
+        .catch((error) => {
+
+            if (error.response && error.response.data) {
+                dispatch({ type: 'ERROR', payload: error.response.data })
+            }
         })
 }
 
 export const logout = () => (dispatch) => {
+
+    localStorage.setItem('token', JSON.stringify({ token: null, name:'' }))
 
     dispatch({ type: LOGOUT, payload: { login: false } })
 }

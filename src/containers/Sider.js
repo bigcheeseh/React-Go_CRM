@@ -7,6 +7,6 @@ const Sider = ({Layout, collapsed, contacts, sortContacts, auth}) => (
     <Layout collapsed={collapsed} auth={auth} sortContacts={sortContacts}/>
 )
 
-const mapStateToProps=({auth})=>({auth})
+const mapStateToProps=({auth, error})=>({auth, error})
 
 export default connect(mapStateToProps, { sortContacts })(Sider)

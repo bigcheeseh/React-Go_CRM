@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { login } from '../actions/index'
+import { login, checkToken } from '../actions/index'
 
 const Auth = (props) => {
     
@@ -10,6 +10,6 @@ const Auth = (props) => {
     )
 }
 
-const mapStateToProps = ({ auth }) => ({ auth })
+const mapStateToProps = ({ auth, error }) => ({ auth, error })
 
-export default connect(mapStateToProps, { login })(Auth);
+export default connect(mapStateToProps, { login, checkToken })(Auth);
