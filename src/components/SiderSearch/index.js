@@ -57,7 +57,6 @@ class SiderComponent extends Component{
         }
 
         if (nextProps.importedContacts && nextProps.importedContacts !== this.props.importedContacts){
-            console.log('reconfig app')
 
             config(auth.token).then(res => {
                 this.setState({fieldsState: res.fieldsObj, fieldsArray: res.fieldsArray, config: res, defaultGroups: res.defaultGroups })
