@@ -29,7 +29,8 @@ class CustomerCard extends Component {
         currentContactData: null,
         contact: {},
         contactId: 0,
-        photo: ''
+        photo: '',
+        contactSaved: false
     }
     onTabChange = (key) => {
         
@@ -56,7 +57,7 @@ class CustomerCard extends Component {
         const { contact, currentContactData } = this.state;
         const { auth } = this.props;
 
-        this.setState({ contact: {...contact, ...currentContactData, ...values } }, ()=>{ 
+        this.setState({ contact: {...contact, ...currentContactData, ...values }, contactSaved: true }, ()=>{ 
 
             this.props.saveContact(this.state.contact, auth.token)
         })
@@ -98,7 +99,7 @@ class CustomerCard extends Component {
     }
     content = () => {
         const { files, fetchFiles, fetchFile, uploadFile, deleteFile, clearFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
-        const { currentContactData, contactId, contact } = this.state
+        const { currentContactData, contactId, contact, contactSaved } = this.state
 
         const cardPageProps = { id: contactId, currentContact, auth, fetchContact, clearLinks, clearNotes, notes, links, addNote, addLink, deleteNote, deleteLink, saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
         return {
@@ -107,6 +108,7 @@ class CustomerCard extends Component {
                           uploadFile={uploadFile}
                           clearFile={clearFile}
                           fetchFile={fetchFile}
+                          contactSaved={contactSaved}
                           photo={files.photo}
                           uploaded={files.uploaded}
                           loading={files.loading}/>,

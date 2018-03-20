@@ -50,7 +50,7 @@ class CustomerForm extends React.Component {
         const { currentContactData } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                //console.log('Received values of form: ', values);
 
                 values.group_id = groupsName[values.group_name]
                 values.birth_date = moment(values.birth_date).format(dateFormat);                  
@@ -130,13 +130,13 @@ class CustomerForm extends React.Component {
 
 
     componentWillMount = () => {
-        const { currentContactData, auth, id, fetchFile } = this.props;
+        const { currentContactData, auth, id, fetchFile, contactSaved } = this.props;
 
         config(auth.token)
             .then(res => {
                 this.setState({fields: res.fields, groups: res.groups, groupsName: res.groupsName, groupsId: res.groupsId }, ()=>{
 
-                    if(!this.props.updateContactBoolean){
+                    if(!this.props.updateContactBoolean && !contactSaved){
                         this.props.form.validateFields((err, values) => {
                             const { groups } = this.state
                             if (!err) {
@@ -169,6 +169,7 @@ class CustomerForm extends React.Component {
 
         //clearFile('PHOTO')
 
+        
         const values = this.props.form.getFieldsValue();
 
         values.birth_date = moment(values.birth_date).format(dateFormat);
@@ -246,7 +247,7 @@ class CustomerForm extends React.Component {
                                     rules: [
                                         { message: 'Выберите группу' },
                                     ],
-                                    initialValue: currentContactData ? groupsId[currentContactData.group_id] : groups[0].name
+                                    initialValue: currentContactData ? currentContactData.group_name : groups[0].name
                                 })(
                                     <Select >
                                         {groups.map((group, i) => (

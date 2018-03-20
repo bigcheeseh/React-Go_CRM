@@ -80,10 +80,8 @@ class Files extends Component{
 
             if(applicationUploadPercent > 0 && applicationUploadPercent < 100 || esseUploadPercent > 0 && esseUploadPercent < 100){
                 message.error('Файл ещё не загружен');
-            }else if (!updateContactBoolean ){
-
-                saveContact()
             }else{
+
                 updateContact()
             }
         
