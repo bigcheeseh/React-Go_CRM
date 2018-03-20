@@ -40,8 +40,8 @@ class CrmContainer extends Component{
 
         componentWillReceiveProps = (nextProps) =>{
                 if(nextProps.error && nextProps.error !== this.props.error){
-                        if(typeof nextProps.error === 'string'){
-                                message.error(nextProps.error, 4)
+                        if(typeof nextProps.error.data === 'string'){
+                                message.error(nextProps.error.data, 4)
                         }
                 }
         }

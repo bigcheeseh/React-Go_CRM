@@ -70,7 +70,7 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -99,7 +99,7 @@ export const importContacts = (file, token) => (dispatch) => {
         .catch((error) => {
             console.log(error.response)
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -151,7 +151,7 @@ export const exportContacts = (token, sorted, filtred) => (dispatch) => {
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -175,7 +175,7 @@ export const fetchContact = (token, id) => (dispatch) => {
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -201,7 +201,7 @@ export const saveContact = (contact, token)=>(dispatch)=>{
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -238,7 +238,7 @@ export const updateContact = (contact, token, id) => (dispatch) => {
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -261,7 +261,7 @@ export const deleteContact = (token, id) => (dispatch) => {
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -295,7 +295,7 @@ export const uploadFile = (file, fileName, fileType, token, id) => (dispatch) =>
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -321,7 +321,7 @@ export const fetchFiles = (token, id) => (dispatch) => {
             .catch((error) => {
 
                 if (error.response && error.response.data) {
-                    dispatch({ type: 'ERROR', payload: error.response.data })
+                    dispatch({ type: 'ERROR', payload: error.response })
                 }
             })
     
@@ -354,7 +354,7 @@ export const fetchFile = (fileName, fileType, token, id) => (dispatch) => {
             .catch((error) => {
 
                 if (error.response && error.response.data){
-                    dispatch({ type: 'ERROR', payload: error.response.data })
+                    dispatch({ type: 'ERROR', payload: error.response })
                 }
             })
     
@@ -380,7 +380,7 @@ export const deleteFile = (fileName, token, id) => (dispatch) => {
         .catch((error) => {
             
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 
@@ -437,7 +437,7 @@ export const addNote = (note, token, id) => (dispatch) =>{
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 } 
@@ -457,7 +457,7 @@ export const deleteNote = (token, id, noteId) => (dispatch) =>{
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 }
@@ -477,7 +477,7 @@ export const addLink = (link, token, id) => (dispatch) =>{
         })
         .catch((error) => {
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 }
@@ -496,7 +496,7 @@ export const deleteLink = (token, id, linkId) => (dispatch) =>{
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 }
@@ -522,7 +522,7 @@ export const login = (values) =>(dispatch)=>{
         .catch((error)=>{
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 }
@@ -545,7 +545,7 @@ export const checkToken = (auth) => (dispatch) => {
         .catch((error) => {
 
             if (error.response && error.response.data) {
-                dispatch({ type: 'ERROR', payload: error.response.data })
+                dispatch({ type: 'ERROR', payload: error.response })
             }
         })
 }
