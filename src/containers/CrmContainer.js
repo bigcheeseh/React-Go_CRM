@@ -28,7 +28,9 @@ import {
 
 class CrmContainer extends Component{
         shouldComponentUpdate = (nextProps, nextState)=>{
-
+                if(nextProps.importedContacts){
+                        return true
+                }
                 if(nextProps !== this.props){
                         return true
                 }
@@ -53,13 +55,14 @@ class CrmContainer extends Component{
 }
 
 const mapStateToProps = ({contacts, auth, notes, links, files, error, count})=>{
-        const { allContacts, sortedContacts, currentContact, extendedSearch, commonSearch} = contacts;
+        const { allContacts, sortedContacts, currentContact, extendedSearch, commonSearch, importedContacts} = contacts;
 
         return {
                 contacts: sortedContacts,
                 currentContact,
                 extendedSearchValue: extendedSearch,
                 commonSearchValue: commonSearch,
+                importedContacts,
                 auth,
                 notes,
                 links,

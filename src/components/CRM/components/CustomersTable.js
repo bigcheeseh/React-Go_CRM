@@ -15,7 +15,6 @@ class CustomersTable extends Component{
         pages: -1,
         loading: false,
         searchValue: '',
-        exportTable: false,
         search: false
 
     }
@@ -75,12 +74,12 @@ class CustomersTable extends Component{
 
         if (nextProps.exportTable && nextProps.commonSearchValue.any_field){
 
-            this.setState({ searchValue: nextProps.commonSearchValue, exportTable: nextProps.exportTable}, () => {
+            this.setState({ searchValue: nextProps.commonSearchValue }, () => {
                 this.ReactTable.props.onFetchData(this.ReactTable.state, null)
             })
         }else if (nextProps.exportTable){
 
-            this.setState({ searchValue: nextProps.extendedSearchValue, exportTable: nextProps.exportTable}, () => {
+            this.setState({ searchValue: nextProps.extendedSearchValue }, () => {
                 this.ReactTable.props.onFetchData(this.ReactTable.state, null)
             })
         }
@@ -95,9 +94,7 @@ class CustomersTable extends Component{
 
     shouldComponentUpdate(nextProps, nextState){
 
-        if (nextProps.extendedSearchValue) {
-            return true
-        }
+
         if(nextState !== this.state){
             return true
         }
@@ -110,8 +107,8 @@ class CustomersTable extends Component{
     }
 
     render(){
-        const { openModalAndUpdate, auth, fetchContacts, exportContacts } = this.props;
-        const { searchValue, exportTable, search} = this.state
+        const { openModalAndUpdate, auth, fetchContacts, exportContacts, exportTable } = this.props;
+        const { searchValue, search} = this.state
         return (
             <ReactTable
 

@@ -51,7 +51,7 @@ export const fetchContacts = (token, row_count, offset, sorted, filtred) => (dis
                 params:{
                     row_count,
                     offset,
-                    sort:      sorted.length > 0 && sorted[0].id !== 'photo' ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
+                    sort:      sorted  && sorted.length > 0 && sorted[0].id !== 'photo' ? `${sorted[0].id} ${sorted[0].desc ? "desc":"asc"}` : '',
                     any_field: filtred && filtred.any_field   ? filtred.any_field : null,
                     name:      filtred && filtred.name        ? filtred.name : null,
                     group_id:  filtred && group_id            ? group_id.join(',') : null,
@@ -93,11 +93,11 @@ export const importContacts = (file, token) => (dispatch) => {
     )
         .then((response) => {
 
-
+            console.log(response)
             dispatch({ type: IMPORT_CONTACTS, payload: response.data })
         })
         .catch((error) => {
-
+            console.log(error.response)
             if (error.response && error.response.data) {
                 dispatch({ type: 'ERROR', payload: error.response.data })
             }

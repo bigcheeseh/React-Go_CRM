@@ -15,8 +15,8 @@ const config = async(token) => {
         const defaultGroups = []
         fields = {
             name: { name: "name", initialState: '', label: "ФИО", placeholder: "Введите ФИО", type: "text", size: 20, smallWindowSize: 20},
-            group_id: {name: 'group_id', initialState: groups, content: groups},
-            phone:   { name: "phone", initialState: '', label: "Телефон", placeholder: "Введите телефон", type: "number", size: 10, smallWindowSize: 20 },
+            group_id: {name: 'group_id', initialState: [], content: groups},
+            phone:   { name: "phone", initialState: '', label: "Телефон", placeholder: "Введите телефон", type: "text", size: 10, smallWindowSize: 20 },
             email: { name: "email", initialState: '', label: "Email", placeholder: "Введите email", type: "email", size: 10, smallWindowSize: 20 },
             industry: { name: "industry", initialState: '', label: "Индустрия", placeholder: "Введите индустрию", type: "text", size: 10, smallWindowSize: 24 },
             company: { name: "company", initialState: '', label: "Компания", placeholder: "Введите компанию", type: "text", size: 12, smallWindowSize: 24 },

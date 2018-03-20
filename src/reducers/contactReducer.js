@@ -3,7 +3,8 @@ const initialState =  {
     sortedContacts: [],
     currentContact: {},
     extendedSearch:{},
-    commonSearch:{}
+    commonSearch:{},
+    importedContacts: 0
 }
 
 export default function(state=initialState, action){
@@ -29,6 +30,9 @@ export default function(state=initialState, action){
         case 'FILTR_CONTACTS':   
             
             return { ...state, extendedSearch: action.payload, commonSearch: {} }
+        case 'IMPORT_CONTACTS':
+
+            return { ...state, importedContacts: {...action.payload}}
 
         case 'COMMON_SEARCH':
             

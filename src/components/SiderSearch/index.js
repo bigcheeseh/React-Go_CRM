@@ -20,6 +20,8 @@ class SiderComponent extends Component{
         fieldsState: {},
         fieldsArray: [],
         collapsed: false,
+        defaultGroups: [],
+        selected: [],
         config:{}
     }
     componentWillMount(){
@@ -27,7 +29,7 @@ class SiderComponent extends Component{
         const { auth } = this.props;
         
         config(auth.token).then(res => {
-            this.setState({fieldsState: res.fieldsObj, fieldsArray: res.fieldsArray, config: res })
+            this.setState({fieldsState: res.fieldsObj, fieldsArray: res.fieldsArray, config: res, defaultGroups: res.defaultGroups })
         })
     }
     handleSearch = () => {
@@ -36,8 +38,8 @@ class SiderComponent extends Component{
 
     }
     handleClear = () => {
- 
-        this.setState( { fieldsState: { ...this.state.config.fieldsObj } })
+
+        this.setState( { fieldsState: { ...this.state.config.fieldsObj }, selected:[] })
         
     }
     componentWillReceiveProps = (nextProps) => {
@@ -49,7 +51,10 @@ class SiderComponent extends Component{
             }
         }
     }
-    
+    handleSelect = (e, field) => {
+
+        this.setState({ fieldsState: { ...this.state.fieldsState, [field.name]: e }, selected: e })
+    }
     renderFields = () => {
         const { fieldsState, fieldsArray,groupsDefaultNumbers, config } = this.state
 
@@ -61,12 +66,13 @@ class SiderComponent extends Component{
                                             <label>Группа</label>
                                         </div>
                                         <Select mode="multiple"
-                                                defaultValue = {config.defaultGroups}
-                                                onChange={(e)=>this.setState({ fieldsState: {...this.state.fieldsState, [field.name]: e}})} 
+                                                ref={(s)=>this.Select = s}
+                                                value={this.state.selected}
+                                                onChange={(e)=>this.handleSelect(e, field)} 
                                                 name={field.name} >                                 
                                                     {field.content.map((group, i) =>{
                                                         return(
-                                                            <Option active={true} ref={group.id} style={{display: 'block'}} key={i} value={group.id}>{group.name}</Option>
+                                                            <Option active={false} ref={group.id} style={{display: 'block'}} key={i} value={group.id}>{group.name}</Option>
                                                             
                                                         )
                                                     }

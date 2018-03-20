@@ -5,7 +5,7 @@ import CustomersTable from './components/CustomersTable';
 
 import PropTypes from 'prop-types';
 
-import { Layout, Menu, Icon, Alert, Input, Col, Row, Button, Upload, Tooltip } from 'antd';
+import { Layout, Menu, Icon, Alert, Input, Col, Row, Button, Upload, Tooltip, message } from 'antd';
 import './index.css'
 
 const { Header, Sider, Content } = Layout;
@@ -19,6 +19,7 @@ class CRM extends Component{
     static propTypes = {
             contacts: PropTypes.array.isRequired,
             contactCount: PropTypes.number.isRequired,
+            importedContacts: PropTypes.number.isRequired,
             notes: PropTypes.array.isRequired,
             links: PropTypes.array.isRequired,
             files: PropTypes.object.isRequired,
@@ -87,7 +88,11 @@ class CRM extends Component{
     }
 
     shouldComponentUpdate = (nextProps, nextState) => {
-  
+        
+        if(nextProps.importedContacts){
+            return true
+        }
+
         if (nextProps !== this.props) {
             return true
         }
@@ -99,7 +104,7 @@ class CRM extends Component{
         return false
     }
     componentWillReceiveProps = (nextProps) => {
-        const { auth, history, files } = nextProps;
+        const { auth, history, files, fetchContacts } = nextProps;
 
         if (!auth.login) {
             history.push('/auth')
@@ -110,9 +115,14 @@ class CRM extends Component{
             this.downloadLink.href = files.excel
             this.downloadLink.click()
         }
+
+        if(nextProps.importedContacts && nextProps.importedContacts !== this.props.importedContacts){
+            message.info(`Импортиравно контактов: ${nextProps.importedContacts.imported}`, 3)
+            fetchContacts(auth.token)
+        }
     
     }
-
+   
     handleExportContacts = ()=>{
 
 
@@ -168,7 +178,7 @@ class CRM extends Component{
                                     </Col>
                                 </Row>
                             </div>
-                            <CustomersTable exportTable={exportTable} 
+                            <CustomersTable exportTable={exportTable}
                                             handleExportContacts={this.handleExportContacts} 
                                             exportContacts={exportContacts} 
                                             fetchFile={fetchFile} 
