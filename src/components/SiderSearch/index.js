@@ -14,6 +14,7 @@ class SiderComponent extends Component{
     
     static propTypes = {
         sortContacts: PropTypes.func.isRequired,
+        importedContacts: PropTypes.object.isRequired,
     }
     
     state = {
@@ -43,12 +44,20 @@ class SiderComponent extends Component{
         
     }
     componentWillReceiveProps = (nextProps) => {
-    
+        const { auth } = this.props;
         if (nextProps.error && nextProps.error !== this.props.error) {
 
             if (typeof nextProps.error.data === 'string') {
                 message.error(nextProps.error.data, 4)
             }
+        }
+
+        if (nextProps.importedContacts && nextProps.importedContacts !== this.props.importedContacts){
+            console.log('reconfig app')
+
+            config(auth.token).then(res => {
+                this.setState({fieldsState: res.fieldsObj, fieldsArray: res.fieldsArray, config: res, defaultGroups: res.defaultGroups })
+            })
         }
     }
     handleSelect = (e, field) => {

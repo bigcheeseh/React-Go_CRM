@@ -19,7 +19,7 @@ class CRM extends Component{
     static propTypes = {
             contacts: PropTypes.array.isRequired,
             contactCount: PropTypes.number.isRequired,
-            importedContacts: PropTypes.number.isRequired,
+            importedContacts: PropTypes.object.isRequired,
             notes: PropTypes.array.isRequired,
             links: PropTypes.array.isRequired,
             files: PropTypes.object.isRequired,

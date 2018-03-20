@@ -4,7 +4,7 @@ const initialState =  {
     currentContact: {},
     extendedSearch:{},
     commonSearch:{},
-    importedContacts: 0
+    importedContacts: {}
 }
 
 export default function(state=initialState, action){

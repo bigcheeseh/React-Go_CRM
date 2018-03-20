@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from 'axios';
 
 const API = 'https://simplecrmonline.cloud/api'
 
@@ -12,7 +12,6 @@ const config = async(token) => {
 
         const res = await axios.get(`${API}/groups`, { headers: {'X-CSRF-Token': token} })
         const groups = res.data.groups; 
-        const defaultGroups = []
         fields = {
             name: { name: "name", initialState: '', label: "ФИО", placeholder: "Введите ФИО", type: "text", size: 20, smallWindowSize: 20},
             group_id: {name: 'group_id', initialState: [], content: groups},
@@ -36,7 +35,7 @@ const config = async(token) => {
         }
 
 
-        return { groups, fields, fieldsArray, fieldsObj, groupsName, groupsId, defaultGroups }
+        return { groups, fields, fieldsArray, fieldsObj, groupsName, groupsId}
 }
 
 

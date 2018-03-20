@@ -134,7 +134,21 @@ class CustomerForm extends React.Component {
 
         config(auth.token)
             .then(res => {
-                this.setState({fields: res.fields, groups: res.groups, groupsName: res.groupsName, groupsId: res.groupsId })
+                this.setState({fields: res.fields, groups: res.groups, groupsName: res.groupsName, groupsId: res.groupsId }, ()=>{
+
+                    if(!this.props.updateContactBoolean){
+                        this.props.form.validateFields((err, values) => {
+                            const { groups } = this.state
+                            if (!err) {
+                                //console.log('Received values of form: ', values);
+                                    values.group_id = groups[0].id;
+                                    values.birth_date = moment(values.birth_date).format(dateFormat);
+                                    this.props.saveContact(values)
+                            }
+
+                        })
+                    }
+                })
             })
 
         this.setState({currentContactData: currentContactData})
@@ -146,20 +160,8 @@ class CustomerForm extends React.Component {
         }
     }
     componentDidMount = () => {
-        const { groups } = this.state
-        if(!this.props.updateContactBoolean){
-            this.props.form.validateFields((err, values) => {
-                if (!err) {
-                    //console.log('Received values of form: ', values);
-
-                        values.group_id = groups.indexOf(values.group_name) + 1;
-                        values.birth_date = moment(values.birth_date).format(dateFormat);
-
-                        this.props.saveContact(values)
-                }
-
-            })
-        }
+        const { groups, groupsName, fields } = this.state
+        
     }
     componentWillUnmount = () =>{
         const { handleCurrentContactData, currentContact, clearFile } = this.props;
