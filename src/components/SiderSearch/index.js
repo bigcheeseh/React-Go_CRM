@@ -45,7 +45,7 @@ class SiderComponent extends Component{
     }
     componentWillReceiveProps = (nextProps) => {
         const { auth } = this.props;
-        console.log(nextProps.collapsed)
+
         if(nextProps.collapsed !== this.state.collapsed){
             this.setState({ collapsed: nextProps.collapsed })
         }
