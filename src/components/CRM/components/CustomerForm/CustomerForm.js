@@ -41,7 +41,8 @@ class CustomerForm extends React.Component {
         fields:{},
         groups:[],
         groupsName:{},
-        groupsId:{}
+        groupsId:{},
+        groupSelect: true
 
     }
     handleSubmit = (e) => {
@@ -52,7 +53,10 @@ class CustomerForm extends React.Component {
             if (!err) {
                 //console.log('Received values of form: ', values);
 
-                values.group_id = groupsName[values.group_name]
+                //values.group_id = groupsName[values.group_name]
+                values.group_id = 0;
+                values.group_name = 'test'
+                console.log(values)
                 values.birth_date = moment(values.birth_date).format(dateFormat);                  
                 //values.photo.url = this.state.imageUrl;
                 this.props.updateContact(values)
@@ -239,25 +243,28 @@ class CustomerForm extends React.Component {
                         {this.standartField(fields.email, 18)}
                         
                         <Col xs={24} sm={24} md={24} lg={10}>
-                            <FormItem
-                                {...formItemLayout}
-                                label="Группа"
-                            >
-                                {getFieldDecorator('group_name', {
-                                    rules: [
-                                        { message: 'Выберите группу' },
-                                    ],
-                                    initialValue: currentContactData ? currentContactData.group_name : groups[0].name
-                                })(
-                                    <Select >
-                                        {groups.map((group, i) => (
-                                                <Option key={i} type="number" value={group.name}>{group.name}</Option>
-                                            )
+                            <div style={{display: 'flex'}}>
+                                    <FormItem
+                                        {...formItemLayout}
+                                        label="Группа">
+                                        {getFieldDecorator('group_name', {
+                                            rules: [
+                                                { message: 'Выберите группу' },
+                                            ],
+                                            initialValue: currentContactData ? currentContactData.group_name : groups[0].name
+                                        })(
+                                            this.state.groupSelect ? 
+                                            <Select >
+                                                {groups.map((group, i) => (
+                                                        <Option key={i} type="number" value={group.name}>{group.name}</Option>
+                                                    )
+                                                )}
+                                            </Select> : <Input style={{width: '100%'}}/>
                                         )}
-                                    </Select>
-                                )}
-                            </FormItem>
-                        
+                                    </FormItem> 
+                                    
+                                <Button style={{marginLeft: '14px'}} onClick={()=>this.setState({groupSelect: !this.state.groupSelect})}><Icon type="plus"/></Button>
+                            </div>
                         </Col>
                         {this.standartField(fields.industry, 16)}
                         {this.standartField(fields.company, 18)}
@@ -265,8 +272,7 @@ class CustomerForm extends React.Component {
                         <Col xs={24} sm={24} md={24} lg={12}>
                             <FormItem
                                 {...{ labelCol: { sm: 6, md: 6, lg: 8 }, wrapperCol: { sm: 18, md: 18, lg: 16 } }}
-                                label="Дата Рождения"
-                            >
+                                label="Дата Рождения">
                                 {getFieldDecorator('birth_date', {
                                     rules: [{ type: 'object', message: 'Дата рождения!' }],
                                     initialValue: currentContactData ? moment(currentContactData.birth_date, dateFormat) : moment('01-27-68', dateFormat)

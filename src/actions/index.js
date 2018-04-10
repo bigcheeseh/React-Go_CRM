@@ -222,6 +222,7 @@ export const commonSearch = ( field ) => (dispatch) => {
 
 export const updateContact = (contact, token, id) => (dispatch) => {
 
+    console.log(contact)
     contact = { ...contact,  photo: '',application: '', esse: '', notes: [], links: [] }
     axios(
             {
@@ -232,7 +233,7 @@ export const updateContact = (contact, token, id) => (dispatch) => {
             }
         )
         .then((response) => {
-
+            console.log(response.data)
             dispatch({ type: UPDATE_CONTACT, payload: response.data })
         })
         .catch((error) => {
@@ -408,7 +409,7 @@ export const setLinks = (links) => (dispatch) => {
 
 export const clearNotes = () => (dispatch) => {
 
-
+    console.log('clear notes')
     dispatch({ type: CLEAR_NOTES })
 
 }

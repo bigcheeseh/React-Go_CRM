@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Tag, Input, Tooltip, Icon, Button, List, Checkbox } from 'antd';
+import { Tag, Input, Tooltip, Icon, Button, List, Checkbox, Form } from 'antd';
 import Note from './NoteItem';
 
 import moment from 'moment';
@@ -38,6 +38,7 @@ class Notes extends Component {
     }
 
     handleInputConfirm = () => {
+        console.log('add note')
         const {addNote, auth, currentContact, currentContactData, id} = this.props
         const state = this.state;
         const inputValue = state.inputValue;
@@ -80,7 +81,7 @@ class Notes extends Component {
 
     shouldComponentUpdate = (nextProps, nextState)=>{
 
-        if(nextState.state!== this.state){
+        if(nextState !== this.state){
             return true
         }
        
@@ -88,7 +89,8 @@ class Notes extends Component {
     }
 
     componentWillUnmount=()=>{
-         this.props.clearNotes()
+        this.setState({ inputValue: ''});
+        this.props.clearNotes()
     }
 
     render() {
@@ -110,18 +112,19 @@ class Notes extends Component {
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                     {inputVisible && (
-                        <div style={{margin: '10px', display: 'flex', justifyContent: 'space-between'}}>
-                            <TextArea
-                                ref={this.saveInputRef}
-                                type="text"
-                                style={{ width: '75%' }}
-                                value={inputValue}
-                                onChange={this.handleInputChange}
-                                onBlur={this.handleInputConfirm}
+                        <Form onSubmit={this.handleInputConfirm}>
+                            <div style={{margin: '10px', display: 'flex', justifyContent: 'space-between'}}>
+                                <TextArea
+                                    ref={this.saveInputRef}
+                                    type="text"
+                                    style={{ width: '75%' }}
+                                    value={inputValue}
+                                    onChange={this.handleInputChange}
 
-                            />
-                            <Button type="primary" shape="circle" icon="plus" onClick={this.handleInputConfirm}/>
-                        </div>
+                                />
+                                <Button type="primary" shape="circle" icon="plus" onClick={this.handleInputConfirm}/>
+                            </div>
+                        </Form>
                     )}
                     {!inputVisible && (
                         <div style={{ margin: '10px', display: 'flex', justifyContent: 'space-between' }}>

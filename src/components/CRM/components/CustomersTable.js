@@ -20,14 +20,14 @@ class CustomersTable extends Component{
     }
 
    columns = () => [{
-        Header: 'Фото',
-        accessor: 'photo',
-        width: 85,
-        Cell: ({original}) => {
+            Header: 'Фото',
+            accessor: 'photo',
+            width: 85,
+            Cell: ({original}) => {
 
-            return <TablePhotoCell original={original} {...this.props}/>
-            
-        }
+                return <TablePhotoCell original={original} {...this.props}/>
+                
+            }
         }, {
             Header: 'ФИО',
             accessor: 'name',
@@ -37,22 +37,40 @@ class CustomersTable extends Component{
             </div>
         }, {
             Header: 'Группа',
-            accessor: 'group_name'
+            accessor: 'group_name',
+            width: 100,
+            Cell: ({ original }) => <div>
+                <p>{original.group_name}</p>
+            </div>
         }, {
             Header: 'Индустрия',
-            accessor: 'industry'
+            accessor: 'industry',
+            Cell: ({ original }) => <div>
+                <p>{original.industry}</p>
+            </div>
         },
         {
             Header: 'Компания',
-            accessor: 'company'
+            accessor: 'company',
+            Cell: ({ original }) => <div>
+                <p>{original.company}</p>
+            </div>
         },
         {
             Header: 'Город',
-            accessor: 'city'
+            accessor: 'city',
+            width: 150,
+            Cell: ({ original }) => <div>
+                <p>{original.city}</p>
+            </div>
         },
         {
             Header: 'Телефон',
-            accessor: 'phone'
+            accessor: 'phone',
+            width: 175,
+            Cell: ({ original }) => <div>
+                <p>{original.phone}</p>
+            </div>
 
         }];
 

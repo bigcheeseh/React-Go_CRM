@@ -28,9 +28,7 @@ import {
 
 class CrmContainer extends Component{
         shouldComponentUpdate = (nextProps, nextState)=>{
-                if(nextProps.importedContacts){
-                        return true
-                }
+
                 if(nextProps !== this.props){
                         return true
                 }

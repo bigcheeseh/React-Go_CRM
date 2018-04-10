@@ -5,3 +5,19 @@
 .rt-noData{
     z-index: 0 !important;
 }
+
+.rt-td{
+    display: flex;
+    align-items: center;
+}
+
+.rt-td div{
+    display: flex;
+    align-items: center;
+    white-space: normal;
+}
+
+.rt-td div p{
+    margin: 0;
+    word-wrap: break-word;
+}
