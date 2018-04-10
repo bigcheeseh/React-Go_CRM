@@ -45,7 +45,7 @@ class CustomersTable extends Component{
         }, {
             Header: 'Индустрия',
             accessor: 'industry',
-            width: 200,
+            width: 230,
             Cell: ({ original }) => <div>
                 <p>{original.industry}</p>
             </div>
@@ -53,6 +53,7 @@ class CustomersTable extends Component{
         {
             Header: 'Компания',
             accessor: 'company',
+            width: 200,
             Cell: ({ original }) => <div>
                 <p>{original.company}</p>
             </div>

@@ -38,7 +38,7 @@ class Notes extends Component {
     }
 
     handleInputConfirm = () => {
-        console.log('add note')
+
         const {addNote, auth, currentContact, currentContactData, id} = this.props
         const state = this.state;
         const inputValue = state.inputValue;
@@ -89,7 +89,6 @@ class Notes extends Component {
     }
 
     componentWillUnmount=()=>{
-        this.setState({ inputValue: ''});
         this.props.clearNotes()
     }
 

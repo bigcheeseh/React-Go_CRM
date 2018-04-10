@@ -51,12 +51,10 @@ class CustomerForm extends React.Component {
         const { currentContactData } = this.state;
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                //console.log('Received values of form: ', values);
+                console.log('Received values of form: ', values);
 
-                //values.group_id = groupsName[values.group_name]
-                values.group_id = 0;
-                values.group_name = 'test'
-                console.log(values)
+                values.group_id = groupsName[values.group_name]
+
                 values.birth_date = moment(values.birth_date).format(dateFormat);                  
                 //values.photo.url = this.state.imageUrl;
                 this.props.updateContact(values)
@@ -134,11 +132,9 @@ class CustomerForm extends React.Component {
 
 
     componentWillMount = () => {
-        const { currentContactData, auth, id, fetchFile, contactSaved } = this.props;
+        const { currentContactData, auth, id, fetchFile, contactSaved, groupsData } = this.props;
 
-        config(auth.token)
-            .then(res => {
-                this.setState({fields: res.fields, groups: res.groups, groupsName: res.groupsName, groupsId: res.groupsId }, ()=>{
+                this.setState({fields: groupsData.fields, groups: groupsData.groups, groupsName: groupsData.groupsName, groupsId: groupsData.groupsId }, ()=>{
 
                     if(!this.props.updateContactBoolean && !contactSaved){
                         this.props.form.validateFields((err, values) => {
@@ -153,7 +149,6 @@ class CustomerForm extends React.Component {
                         })
                     }
                 })
-            })
 
         this.setState({currentContactData: currentContactData})
 
@@ -163,10 +158,7 @@ class CustomerForm extends React.Component {
             this.setState({loading: true})
         }
     }
-    componentDidMount = () => {
-        const { groups, groupsName, fields } = this.state
-        
-    }
+   
     componentWillUnmount = () =>{
         const { handleCurrentContactData, currentContact, clearFile } = this.props;
         const { currentContactData, fields } = this.state;
@@ -198,7 +190,7 @@ class CustomerForm extends React.Component {
     render() {
         const { getFieldDecorator, onValuesChange } = this.props.form;
         const { currentContactData, fields, groups, groupsId } = this.state;
-        const { auth, id } = this.props;
+        const { auth, id, groupsData } = this.props;
        
 
         const formItemLayout = {
@@ -212,8 +204,7 @@ class CustomerForm extends React.Component {
                 <div className="ant-upload-text">Фото</div>
             </div>
         );
-        
-        if(groups.length > 0 ){
+        if (groupsData.groups.length > 0){
             return (
                 <Form onSubmit={this.handleSubmit}>
                     <Row>
@@ -253,17 +244,15 @@ class CustomerForm extends React.Component {
                                             ],
                                             initialValue: currentContactData ? currentContactData.group_name : groups[0].name
                                         })(
-                                            this.state.groupSelect ? 
                                             <Select >
                                                 {groups.map((group, i) => (
                                                         <Option key={i} type="number" value={group.name}>{group.name}</Option>
                                                     )
                                                 )}
-                                            </Select> : <Input style={{width: '100%'}}/>
+                                            </Select>
                                         )}
                                     </FormItem> 
                                     
-                                <Button style={{marginLeft: '14px'}} onClick={()=>this.setState({groupSelect: !this.state.groupSelect})}><Icon type="plus"/></Button>
                             </div>
                         </Col>
                         {this.standartField(fields.industry, 16)}
@@ -295,10 +284,9 @@ class CustomerForm extends React.Component {
                 </Form>
             );
         }else{
-            return(
-                <p>Загрузка...</p>
-            )
+            return 'Загрузка групп ...'
         }
+        
     }
 }
 

@@ -409,7 +409,6 @@ export const setLinks = (links) => (dispatch) => {
 
 export const clearNotes = () => (dispatch) => {
 
-    console.log('clear notes')
     dispatch({ type: CLEAR_NOTES })
 
 }

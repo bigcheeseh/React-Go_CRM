@@ -3,6 +3,8 @@ import Modal from 'react-modal';
 import CustomerCard from './components/CustomerCard';
 import CustomersTable from './components/CustomersTable';
 
+import config from './components/CustomerForm/config/fields';
+
 import PropTypes from 'prop-types';
 
 import { Layout, Menu, Icon, Alert, Input, Col, Row, Button, Upload, Tooltip, message } from 'antd';
@@ -57,6 +59,7 @@ class CRM extends Component{
         updateContactBoolean : false,
         currentContactData: null,
         exportTable: false,
+        groupsData: []
     };
     toggle = () => {
         this.setState({
@@ -83,6 +86,11 @@ class CRM extends Component{
         if(!auth.login){
             history.push("/auth")
         }
+
+        config(auth.token)
+            .then(res => {
+                this.setState({groupsData: res})
+            })
 
         
     }
@@ -138,7 +146,7 @@ class CRM extends Component{
     
     render(){
         const { extendedSearchValue, commonSearchValue, commonSearch, uploadFile, fetchFile, fetchFiles, deleteFile, clearFile, files, title, saveContact, updateContact, contacts, fetchContacts, sortContacts, fetchContact, importContacts, exportContacts, auth, currentContact, deleteContact, setNotes, setLinks, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props;
-        const { currentContactData, updateContactBoolean, exportTable } = this.state;
+        const { currentContactData, updateContactBoolean, exportTable, groupsData } = this.state;
 
         return(                  
                         <div>
@@ -196,35 +204,36 @@ class CRM extends Component{
                                 contentLabel="Customer Modal"
                                 className="modal"
                                 overlayClassName="overlay"
-                            >   
-                                <Alert message="Информация о контакте" type="info" style={{borderRadius: '3px 3px 0 0'}}/>
-                                <CustomerCard style={{width: '100%', height: '100%', padding: '10px' }} 
-                                              closeModal={this.closeModal}
-                                              auth={auth}
-                                              uploadFile={uploadFile}
-                                              fetchFile={fetchFile}
-                                              fetchFiles={fetchFiles}
-                                              deleteFile={deleteFile}
-                                              clearFile={clearFile}
-                                              files={files}
-                                              fetchContact={fetchContact} 
-                                              saveContact={saveContact}
-                                              updateContact={updateContact}
-                                              deleteContact={deleteContact}
-                                              updateContactBoolean ={updateContactBoolean}
-                                              currentContactData={currentContactData}
-                                              currentContact={currentContact}
-                                              setNotes={setNotes}
-                                              setLinks={setLinks}
-                                              clearNotes={clearNotes}
-                                              clearLinks={clearLinks}
-                                              notes={notes} 
-                                              links={links}
-                                              addNote={addNote}
-                                              addLink={addLink}
-                                              deleteNote={deleteNote}
-                                              deleteLink={deleteLink}/>
+                            >
 
+                                            <Alert message="Информация о контакте" type="info" style={{borderRadius: '3px 3px 0 0'}}/>
+                                            <CustomerCard style={{width: '100%', height: '100%', padding: '10px' }} 
+                                                        closeModal={this.closeModal}
+                                                        auth={auth}
+                                                        uploadFile={uploadFile}
+                                                        fetchFile={fetchFile}
+                                                        fetchFiles={fetchFiles}
+                                                        deleteFile={deleteFile}
+                                                        clearFile={clearFile}
+                                                        files={files}
+                                                        fetchContact={fetchContact} 
+                                                        saveContact={saveContact}
+                                                        updateContact={updateContact}
+                                                        deleteContact={deleteContact}
+                                                        updateContactBoolean ={updateContactBoolean}
+                                                        currentContactData={currentContactData}
+                                                        currentContact={currentContact}
+                                                        setNotes={setNotes}
+                                                        setLinks={setLinks}
+                                                        clearNotes={clearNotes}
+                                                        clearLinks={clearLinks}
+                                                        notes={notes} 
+                                                        links={links}
+                                                        addNote={addNote}
+                                                        addLink={addLink}
+                                                        deleteNote={deleteNote}
+                                                        deleteLink={deleteLink}
+                                                        groupsData={groupsData}/>
                             </Modal>
                         </div>
 

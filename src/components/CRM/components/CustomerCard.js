@@ -98,7 +98,7 @@ class CustomerCard extends Component {
         this.props.closeModal()
     }
     content = () => {
-        const { files, fetchFiles, fetchFile, uploadFile, deleteFile, clearFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink } = this.props
+        const { files, fetchFiles, fetchFile, uploadFile, deleteFile, clearFile, updateContactBoolean, currentContact, auth, fetchContact, clearNotes, clearLinks, notes, links, addNote, addLink, deleteNote, deleteLink, groupsData } = this.props
         const { currentContactData, contactId, contact, contactSaved } = this.state
 
         const cardPageProps = { id: contactId, currentContact, auth, fetchContact, clearLinks, clearNotes, notes, links, addNote, addLink, deleteNote, deleteLink, saveContact: this.saveContact, updateContact: this.updateContact, handleCurrentContactData: this.handleCurrentContactData, currentContactData, updateContactBoolean }
@@ -111,7 +111,8 @@ class CustomerCard extends Component {
                           contactSaved={contactSaved}
                           photo={files.photo}
                           uploaded={files.uploaded}
-                          loading={files.loading}/>,
+                          loading={files.loading}
+                          groupsData={groupsData}/>,
             notes: <Notes {...cardPageProps}
                           name="notes"
                           closeModal={this.props.closeModal}
